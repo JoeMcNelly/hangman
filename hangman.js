@@ -38,14 +38,23 @@ function render()
     drawBackground();
 
     if (score > 0){
-        drawHead();
-        if (score > 1){
-            drawTorso();
-            if(score > 2){
-                drawLeftArm();//etc until the game is over
-            }
-        }
+        drawHead();   
     }
+	if (score > 1){
+        drawTorso();  
+    }
+    if(score > 2){
+        drawLeftArm();
+    }
+	if(score>3){
+		drawRightArm();
+	}
+	if(score>4){
+		drawLeftLeg();
+	}
+	if(score>5){
+		drawRightLeg();
+	}
 }
 
 function drawHead(){
