@@ -1,7 +1,13 @@
 var gl;
 var canvas;
+var vBuffer;
+var cBuffer;
+var MAXNUM=1000; //maximum number of vertices, adjust as needed
+var index=0; //pointer to current location in buffer
+
 var colors = [vec4(0.4,0.0,0.0,1.0),//red
               vec4(0.0,0.4,0.0,1.0),//green
+			  vec4(0.0,0.0,0.4,1.0),//blue
               vec4(0,0,0,1),//black
               vec4(1,1,1,1)//white
             ]
@@ -22,6 +28,24 @@ window.onload = function init()
     
     var program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
+	
+	//Create and associate Vertex buffer
+	vBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, 8*MAXNUM, gl.STATIC_DRAW );
+	
+	var vPosition = gl.getAttribLocation( program, "vPosition" );
+    gl.vertexAttribPointer( vPosition, 2, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vPosition );
+	
+	//Create and associate Color buffer
+	cBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, 16*MAXNUM, gl.STATIC_DRAW);
+	
+	var vColor = gl.getAttribLocation( program, "vColor");
+    gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(vColor);
     
     //add other gl setup things here for 3d stuffs and whatnot
     
