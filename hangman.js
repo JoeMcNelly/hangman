@@ -3,6 +3,7 @@ var canvas;
 var vBuffer;
 var cBuffer;
 var nBuffer;
+var numTimesToSubdivide = 5;
 var MAXNUM=1000; //maximum number of vertices, adjust as needed
 var index=0; //pointer to current location in buffer
 
@@ -12,7 +13,41 @@ var colors = [vec4(0.4,0.0,0.0,1.0),//red
               vec4(0,0,0,1),//black
               vec4(1,1,1,1)//white
             ]
+var near = -10;
+var far = 10;
+var radius = 1.5;
+var theta  = 0.0;
+var phi    = 0.0;
+var dr = 5.0 * Math.PI/180.0;
 
+var left = -3.0;
+var right = 3.0;
+var ytop =3.0;
+var bottom = -3.0;
+
+var va = vec4(0.0, 0.0, -1.0,1);
+var vb = vec4(0.0, 0.942809, 0.333333, 1);
+var vc = vec4(-0.816497, -0.471405, 0.333333, 1);
+var vd = vec4(0.816497, -0.471405, 0.333333,1);
+    
+var lightPosition = vec4(1.0, 1.0, 1.0, 0.0 );
+var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
+var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
+var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
+
+var materialAmbient = vec4( 1.0, 0.0, 1.0, 1.0 );
+var materialDiffuse = vec4( 1.0, 0.8, 0.0, 1.0 );
+var materialSpecular = vec4( 1.0, 0.8, 0.0, 1.0 );
+var materialShininess = 100.0;
+
+var ctm;
+var ambientColor, diffuseColor, specularColor;
+
+var modelViewMatrix, projectionMatrix;
+var modelViewMatrixLoc, projectionMatrixLoc;
+var eye;
+var at = vec3(0.0, 0.0, 0.0);
+var up = vec3(0.0, 1.0, 0.0);
 window.onload = function init()
 {
     canvas = document.getElementById( "gl-canvas" );
@@ -29,6 +64,14 @@ window.onload = function init()
     
     var program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
+    
+    
+    ambientProduct = mult(lightAmbient, materialAmbient);
+    diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    specularProduct = mult(lightSpecular, materialSpecular);
+
+    
+    tetrahedron(va, vb, vc, vd, numTimesToSubdivide);
 	
 	//Create and associate Vertex buffer
 	vBuffer = gl.createBuffer();
@@ -58,8 +101,20 @@ window.onload = function init()
 	gl.vertexAttribPointer(vNormal,4,gl.FLOAT,false,0,0);
 	gl.enableVertexAttribArray(vNormal);
     
-    //add other gl setup things here for 3d stuffs and whatnot
+    modelViewMatrixLoc = gl.getUniformLocation( program, "modelViewMatrix" );
+    projectionMatrixLoc = gl.getUniformLocation( program, "projectionMatrix" );
     
+    //add other gl setup things here for 3d stuffs and whatnot
+    gl.uniform4fv( gl.getUniformLocation(program, 
+       "ambientProduct"),flatten(ambientProduct) );
+    gl.uniform4fv( gl.getUniformLocation(program, 
+       "diffuseProduct"),flatten(diffuseProduct) );
+    gl.uniform4fv( gl.getUniformLocation(program, 
+       "specularProduct"),flatten(specularProduct) );	
+    gl.uniform4fv( gl.getUniformLocation(program, 
+       "lightPosition"),flatten(lightPosition) );
+    gl.uniform1f( gl.getUniformLocation(program, 
+       "shininess"),materialShininess );
     
     //add button/key listeners
     
@@ -69,6 +124,16 @@ window.onload = function init()
 function render()
 {
     //do normal render things
+    gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    
+    eye = vec3(radius*Math.sin(theta)*Math.cos(phi), 
+        radius*Math.sin(theta)*Math.sin(phi), radius*Math.cos(theta));
+
+    modelViewMatrix = lookAt(eye, at , up);
+    projectionMatrix = ortho(left, right, bottom, ytop, near, far);
+            
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+    gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
 
     drawBackground();
 
@@ -90,6 +155,7 @@ function render()
 	if(score>5){
 		drawRightLeg();
 	}
+     window.requestAnimFrame(render);
 }
 
 function drawHead(){
@@ -109,4 +175,45 @@ function drawLeftLeg(){
 }
 function drawRightLeg(){
 //push the points to the buffers and whatnot
+}
+function triangle(a,b,c){
+	var t1 = subtract(b,a)
+	var t2 = subtract(c,a)
+	var norm = normalize(cross(t1,t2));
+	norm = vec4(norm);
+	for (var i=0; i<3; i++){
+		nBuffer.push(norm);
+	}
+	vBuffer.push(a);
+	vBuffer.push(b);
+	vBuffer.push(c);
+	index+=3;
+}
+function divideTriangle(a, b, c, count) {
+    if ( count > 0 ) {
+                
+        var ab = mix( a, b, 0.5);
+        var ac = mix( a, c, 0.5);
+        var bc = mix( b, c, 0.5);
+                
+        ab = normalize(ab, true);
+        ac = normalize(ac, true);
+        bc = normalize(bc, true);
+                                
+        divideTriangle( a, ab, ac, count - 1 );
+        divideTriangle( ab, b, bc, count - 1 );
+        divideTriangle( bc, c, ac, count - 1 );
+        divideTriangle( ab, bc, ac, count - 1 );
+    }
+    else { 
+        triangle( a, b, c );
+    }
+}
+
+
+function tetrahedron(a, b, c, d, n) {
+    divideTriangle(a, b, c, n);
+    divideTriangle(d, c, b, n);
+    divideTriangle(a, d, b, n);
+    divideTriangle(a, c, d, n);
 }
