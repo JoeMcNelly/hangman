@@ -18,7 +18,7 @@ var far = 10;
 var radius = 2.5;
 var theta  = 0.0;
 var phi    = 0.0;
-var dr = 5.0 * Math.PI/180.0;
+var dr = 5.0 * Math.PI/180.0; 
 
 var left = -6;
 var right = 6;
