@@ -1,9 +1,9 @@
 var gl;
 var canvas;
-var vBuffer;
-var cBuffer;
-var nBuffer;
-var numTimesToSubdivide = 5;
+var vBuffer = [];
+var cBuffer = [];
+var nBuffer = [];
+var numTimesToSubdivide = 6;
 var MAXNUM=1000; //maximum number of vertices, adjust as needed
 var index=0; //pointer to current location in buffer
 
@@ -15,7 +15,7 @@ var colors = [vec4(0.4,0.0,0.0,1.0),//red
             ]
 var near = -10;
 var far = 10;
-var radius = 1.5;
+var radius = 2.5;
 var theta  = 0.0;
 var phi    = 0.0;
 var dr = 5.0 * Math.PI/180.0;
@@ -48,134 +48,9 @@ var modelViewMatrixLoc, projectionMatrixLoc;
 var eye;
 var at = vec3(0.0, 0.0, 0.0);
 var up = vec3(0.0, 1.0, 0.0);
-window.onload = function init()
-{
-    canvas = document.getElementById( "gl-canvas" );
-    
-    gl = WebGLUtils.setupWebGL( canvas );
-    if ( !gl ) { alert( "WebGL isn't available" ); }
-  
-    //
-    //  Configure WebGL
-    //
-    gl.viewport( 0, 0, canvas.width, canvas.height );
-    gl.clearColor( 1, 1, 1, 1 ); //white for now
-	gl.enable(gl.DEPTH_TEST);
-    
-    var program = initShaders( gl, "vertex-shader", "fragment-shader" );
-    gl.useProgram( program );
-    
-    
-    ambientProduct = mult(lightAmbient, materialAmbient);
-    diffuseProduct = mult(lightDiffuse, materialDiffuse);
-    specularProduct = mult(lightSpecular, materialSpecular);
+var score = 0;
 
-    
-    tetrahedron(va, vb, vc, vd, numTimesToSubdivide);
-	
-	//Create and associate Vertex buffer
-	vBuffer = gl.createBuffer();
-    gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-    gl.bufferData( gl.ARRAY_BUFFER, 16*MAXNUM, gl.STATIC_DRAW );
-	
-	var vPosition = gl.getAttribLocation( program, "vPosition" );
-    gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( vPosition );
-	
-	//Create and associate Color buffer
-	cBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, 16*MAXNUM, gl.STATIC_DRAW);
-	
-	var vColor = gl.getAttribLocation( program, "vColor");
-    gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(vColor);
-	
-	//Create and associate Normal Buffer
-	
-	nBuffer=gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, 16*MAXNUM, gl.STATIC_DRAW);
-	
-	var vNormal = gl.getAttribLocation (program, "vNormal");
-	gl.vertexAttribPointer(vNormal,4,gl.FLOAT,false,0,0);
-	gl.enableVertexAttribArray(vNormal);
-    
-    modelViewMatrixLoc = gl.getUniformLocation( program, "modelViewMatrix" );
-    projectionMatrixLoc = gl.getUniformLocation( program, "projectionMatrix" );
-    
-    //add other gl setup things here for 3d stuffs and whatnot
-    gl.uniform4fv( gl.getUniformLocation(program, 
-       "ambientProduct"),flatten(ambientProduct) );
-    gl.uniform4fv( gl.getUniformLocation(program, 
-       "diffuseProduct"),flatten(diffuseProduct) );
-    gl.uniform4fv( gl.getUniformLocation(program, 
-       "specularProduct"),flatten(specularProduct) );	
-    gl.uniform4fv( gl.getUniformLocation(program, 
-       "lightPosition"),flatten(lightPosition) );
-    gl.uniform1f( gl.getUniformLocation(program, 
-       "shininess"),materialShininess );
-    
-    //add button/key listeners
-    
-    render();
 
-}
-function render()
-{
-    //do normal render things
-    gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    
-    eye = vec3(radius*Math.sin(theta)*Math.cos(phi), 
-        radius*Math.sin(theta)*Math.sin(phi), radius*Math.cos(theta));
-
-    modelViewMatrix = lookAt(eye, at , up);
-    projectionMatrix = ortho(left, right, bottom, ytop, near, far);
-            
-    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-    gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
-
-    drawBackground();
-
-    if (score > 0){
-        drawHead();   
-    }
-	if (score > 1){
-        drawTorso();  
-    }
-    if(score > 2){
-        drawLeftArm();
-    }
-	if(score>3){
-		drawRightArm();
-	}
-	if(score>4){
-		drawLeftLeg();
-	}
-	if(score>5){
-		drawRightLeg();
-	}
-     window.requestAnimFrame(render);
-}
-
-function drawHead(){
-//push the points to the buffers and whatnot
-}
-function drawTorso(){
-//push the points to the buffers and whatnot
-}
-function drawLeftArm(){
-//push the points to the buffers and whatnot
-}
-function drawRightArm(){
-//push the points to the buffers and whatnot
-}
-function drawLeftLeg(){
-//push the points to the buffers and whatnot
-}
-function drawRightLeg(){
-//push the points to the buffers and whatnot
-}
 function triangle(a,b,c){
 	var t1 = subtract(b,a)
 	var t2 = subtract(c,a)
@@ -216,4 +91,157 @@ function tetrahedron(a, b, c, d, n) {
     divideTriangle(d, c, b, n);
     divideTriangle(a, d, b, n);
     divideTriangle(a, c, d, n);
+}
+
+
+
+
+window.onload = function init()
+{
+    canvas = document.getElementById( "gl-canvas" );
+    
+    gl = WebGLUtils.setupWebGL( canvas );
+    if ( !gl ) { alert( "WebGL isn't available" ); }
+  
+    //
+    //  Configure WebGL
+    //
+    gl.viewport( 0, 0, canvas.width, canvas.height );
+    gl.clearColor( .9, .9, .9, 1 ); //gray for now
+	gl.enable(gl.DEPTH_TEST);
+    
+    var program = initShaders( gl, "vertex-shader", "fragment-shader" );
+    gl.useProgram( program );
+    
+    
+    ambientProduct = mult(lightAmbient, materialAmbient);
+    diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    specularProduct = mult(lightSpecular, materialSpecular);
+
+    
+    tetrahedron(va, vb, vc, vd, numTimesToSubdivide);
+	/*
+	//Create and associate Vertex buffer
+	vBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, 16*MAXNUM, gl.STATIC_DRAW );
+	
+	var vPosition = gl.getAttribLocation( program, "vPosition" );
+    gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vPosition );
+	
+	//Create and associate Color buffer
+	cBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, 16*MAXNUM, gl.STATIC_DRAW);
+	
+	var vColor = gl.getAttribLocation( program, "vColor");
+    gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(vColor);
+	
+	//Create and associate Normal Buffer
+	
+	nBuffer=gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, 16*MAXNUM, gl.STATIC_DRAW);
+	
+	var vNormal = gl.getAttribLocation (program, "vNormal");
+	gl.vertexAttribPointer(vNormal,4,gl.FLOAT,false,0,0);
+	gl.enableVertexAttribArray(vNormal);
+    */
+    var nBuffer1 = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, nBuffer1);
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(nBuffer), gl.STATIC_DRAW );
+    
+    var vNormal = gl.getAttribLocation( program, "vNormal" );
+    gl.vertexAttribPointer( vNormal, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vNormal);
+
+
+    var vBuffer1 = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer1);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(vBuffer), gl.STATIC_DRAW);
+    
+    var vPosition = gl.getAttribLocation( program, "vPosition");
+    gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(vPosition);
+    
+    modelViewMatrixLoc = gl.getUniformLocation( program, "modelViewMatrix" );
+    projectionMatrixLoc = gl.getUniformLocation( program, "projectionMatrix" );
+    
+    //add other gl setup things here for 3d stuffs and whatnot
+    gl.uniform4fv( gl.getUniformLocation(program, 
+       "ambientProduct"),flatten(ambientProduct) );
+    gl.uniform4fv( gl.getUniformLocation(program, 
+       "diffuseProduct"),flatten(diffuseProduct) );
+    gl.uniform4fv( gl.getUniformLocation(program, 
+       "specularProduct"),flatten(specularProduct) );	
+    gl.uniform4fv( gl.getUniformLocation(program, 
+       "lightPosition"),flatten(lightPosition) );
+    gl.uniform1f( gl.getUniformLocation(program, 
+       "shininess"),materialShininess );
+    
+    //add button/key listeners
+    
+    render();
+
+}
+function render()
+{
+    //do normal render things
+    gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    
+    eye = vec3(radius*Math.sin(theta)*Math.cos(phi), 
+        radius*Math.sin(theta)*Math.sin(phi), radius*Math.cos(theta));
+
+    modelViewMatrix = lookAt(eye, at , up);
+    projectionMatrix = ortho(left, right, bottom, ytop, near, far);
+    
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+    gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
+
+    //drawBackground();
+    score = 1;
+
+    if (score > 0){
+        drawHead();   
+    }
+	if (score > 1){
+        drawTorso();  
+    }
+    if(score > 2){
+        drawLeftArm();
+    }
+	if(score>3){
+		drawRightArm();
+	}
+	if(score>4){
+		drawLeftLeg();
+	}
+	if(score>5){
+		drawRightLeg();
+	}
+     window.requestAnimFrame(render);
+}
+function drawBackground(){
+//push the points and play destiny
+}
+function drawHead(){
+    for( var i=0; i<index; i+=3) 
+        gl.drawArrays( gl.TRIANGLES, i, 3 );
+}
+function drawTorso(){
+//push the points to the buffers and whatnot
+}
+function drawLeftArm(){
+//push the points to the buffers and whatnot
+}
+function drawRightArm(){
+//push the points to the buffers and whatnot
+}
+function drawLeftLeg(){
+//push the points to the buffers and whatnot
+}
+function drawRightLeg(){
+//push the points to the buffers and whatnot
 }
