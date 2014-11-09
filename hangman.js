@@ -20,24 +20,24 @@ var theta  = 0.0;
 var phi    = 0.0;
 var dr = 5.0 * Math.PI/180.0;
 
-var left = -3.0;
-var right = 3.0;
-var ytop =3.0;
-var bottom = -3.0;
+var left = -6;
+var right = 6;
+var ytop =6;
+var bottom = -6;
 
 var va = vec4(0.0, 0.0, -1.0,1);
 var vb = vec4(0.0, 0.942809, 0.333333, 1);
 var vc = vec4(-0.816497, -0.471405, 0.333333, 1);
 var vd = vec4(0.816497, -0.471405, 0.333333,1);
     
-var lightPosition = vec4(1.0, 1.0, 1.0, 0.0 );
+var lightPosition = vec4(1, -1, 1, 0.0 );
 var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
 var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
 var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
 
 var materialAmbient = vec4( 1.0, 0.0, 1.0, 1.0 );
 var materialDiffuse = vec4( 1.0, 0.8, 0.0, 1.0 );
-var materialSpecular = vec4( 1.0, 0.8, 0.0, 1.0 );
+var materialSpecular = vec4( 1.0, 0.9, 0.0, 1.0 );
 var materialShininess = 100.0;
 
 var ctm;
@@ -52,6 +52,7 @@ var score = 0;
 
 
 function triangle(a,b,c){
+
 	var t1 = subtract(b,a)
 	var t2 = subtract(c,a)
 	var norm = normalize(cross(t1,t2));
@@ -59,6 +60,11 @@ function triangle(a,b,c){
 	for (var i=0; i<3; i++){
 		nBuffer.push(norm);
 	}
+    
+    a= vec4(a[0], a[1] + 2, a[2], a[3])
+    b= vec4(b[0], b[1] + 2, b[2], b[3])
+    c= vec4(c[0], c[1] + 2, c[2], c[3])
+    
 	vBuffer.push(a);
 	vBuffer.push(b);
 	vBuffer.push(c);
