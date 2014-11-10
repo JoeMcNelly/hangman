@@ -1,56 +1,121 @@
 var gl;
 var canvas;
-var vBuffer = [];
-var cBuffer = [];
-var nBuffer = [];
-var numTimesToSubdivide = 6;
-var MAXNUM=1000; //maximum number of vertices, adjust as needed
+var vertexArray = [];
+var ambientArray = [];
+var diffuseArray = [];
+var specularArray = [];
+var shininessArray = [];
+var normalArray = [];
+
+
+//Dudes head
+var va = vec4(0.0, 0.0, -1.0,1);
+var vb = vec4(0.0, 0.942809, 0.333333, 1);
+var vc = vec4(-0.816497, -0.471405, 0.333333, 1);
+var vd = vec4(0.816497, -0.471405, 0.333333,1);
+var numTimesToSubdivide = 5;
+var headAmbColor=vec4(240.0/255.0,230.0/255.0,140.0/255.0,1.0);
+var headDiffColor=vec4(240.0/255.0,230.0/255.0,140.0/255.0,1.0);
+var headSpecColor=vec4(240.0/255.0,230.0/255.0,140.0/255.0,1.0);
+var headAmb;
+var headDiff;
+var headSpec;
+var headShininess=1000.0;
 var index=0; //pointer to current location in buffer
 
-var colors = [vec4(0.4,0.0,0.0,1.0),//red
-              vec4(0.0,0.4,0.0,1.0),//green
-			  vec4(0.0,0.0,0.4,1.0),//blue
-              vec4(0,0,0,1),//black
-              vec4(1,1,1,1)//white
-            ]
+
+//Dude's Torso
+var torsoPoints = [
+    vec4( -0.25, -2,  0.2, 1.0 ),
+    vec4( -0.25,  2,  0.2, 1.0 ),
+    vec4( 0.15,  2,  0.2, 1.0 ),
+    vec4( 0.15, -2,  0.2, 1.0 ),
+    vec4( -0.15, -2, -0.2, 1.0 ),
+    vec4( -0.15,  2, -0.2, 1.0 ),
+    vec4( 0.25,  2, -0.2, 1.0 ),
+    vec4( 0.25, -2, -0.2, 1.0 )
+];
+var torsoAmbColor=vec4(1.0,0.0,0.0,1.0);
+var torsoDiffColor=vec4(1.0,0.8,0.2,1.0);
+var torsoSpecColor=vec4(1.0,0.5,0.5,1.0);
+var torsoAmb;
+var torsoDiff;
+var torsoSpec;
+var torsoShininess=2.0;
+
+
+
 var near = -10;
 var far = 10;
 var radius = 2.5;
 var theta  = 0.0;
 var phi    = 0.0;
-var dr = 5.0 * Math.PI/180.0; 
+
 
 var left = -6;
 var right = 6;
 var ytop =6;
 var bottom = -6;
 
-var va = vec4(0.0, 0.0, -1.0,1);
-var vb = vec4(0.0, 0.942809, 0.333333, 1);
-var vc = vec4(-0.816497, -0.471405, 0.333333, 1);
-var vd = vec4(0.816497, -0.471405, 0.333333,1);
+
     
 var lightPosition = vec4(1, -1, 1, 0.0 );
 var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
 var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
 var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
 
-var materialAmbient = vec4( 1.0, 0.0, 1.0, 1.0 );
-var materialDiffuse = vec4( 1.0, 0.8, 0.0, 1.0 );
-var materialSpecular = vec4( 1.0, 0.9, 0.0, 1.0 );
-var materialShininess = 100.0;
-
-var ctm;
-var ambientColor, diffuseColor, specularColor;
 
 var modelViewMatrix, projectionMatrix;
 var modelViewMatrixLoc, projectionMatrixLoc;
 var eye;
 var at = vec3(0.0, 0.0, 0.0);
 var up = vec3(0.0, 1.0, 0.0);
+
 var score = 0;
 
+function quad(a, b, c, d) {
+    
+    var pa = torsoPoints[a];
+    var pb = torsoPoints[b];
+    var pc = torsoPoints[c];
+    var pd = torsoPoints[d];
 
+     vertexArray.push(torsoPoints[a]); 
+ 
+     vertexArray.push(torsoPoints[b]); 
+
+     vertexArray.push(torsoPoints[c]); 
+   
+     vertexArray.push(torsoPoints[a]); 
+
+     vertexArray.push(torsoPoints[c]); 
+
+     vertexArray.push(torsoPoints[d]); 
+     
+     
+    var t1 = subtract(pb,pa)
+	var t2 = subtract(pc,pa)
+	var norm = normalize(cross(t1,t2));
+	norm = vec4(norm);
+	for (var i=0; i<6; i++){
+		normalArray.push(norm);
+		specularArray.push(torsoSpec);
+		diffuseArray.push(torsoDiff);
+		shininessArray.push(torsoShininess);
+		ambientArray.push(torsoAmb);
+	}
+    
+}
+
+function torso()
+{
+    quad( 1, 0, 3, 2 );
+    quad( 2, 3, 7, 6 );
+    quad( 3, 0, 4, 7 );
+    quad( 6, 5, 1, 2 );
+    quad( 4, 5, 6, 7 );
+    quad( 5, 4, 0, 1 );
+}
 function triangle(a,b,c){
 
 	var t1 = subtract(b,a)
@@ -58,16 +123,20 @@ function triangle(a,b,c){
 	var norm = normalize(cross(t1,t2));
 	norm = vec4(norm);
 	for (var i=0; i<3; i++){
-		nBuffer.push(norm);
+		normalArray.push(norm);
+		specularArray.push(headSpec);
+		diffuseArray.push(headDiff);
+		shininessArray.push(headShininess);
+		ambientArray.push(headAmb);
 	}
     
     a= vec4(a[0], a[1] + 2, a[2], a[3])
     b= vec4(b[0], b[1] + 2, b[2], b[3])
     c= vec4(c[0], c[1] + 2, c[2], c[3])
     
-	vBuffer.push(a);
-	vBuffer.push(b);
-	vBuffer.push(c);
+	vertexArray.push(a);
+	vertexArray.push(b);
+	vertexArray.push(c);
 	index+=3;
 }
 function divideTriangle(a, b, c, count) {
@@ -120,75 +189,92 @@ window.onload = function init()
     gl.useProgram( program );
     
     
-    ambientProduct = mult(lightAmbient, materialAmbient);
-    diffuseProduct = mult(lightDiffuse, materialDiffuse);
-    specularProduct = mult(lightSpecular, materialSpecular);
+    headAmb = mult(lightAmbient, headAmbColor);
+    headDiff = mult(lightDiffuse, headDiffColor);
+    headSpec = mult(lightSpecular, headSpecColor);
+	torsoAmb = mult(lightAmbient, torsoAmbColor);
+    torsoDiff = mult(lightDiffuse, torsoDiffColor);
+    torsoSpec = mult(lightSpecular, torsoSpecColor);
 
-    
+    //POPULATE POINTS
     tetrahedron(va, vb, vc, vd, numTimesToSubdivide);
-	/*
-	//Create and associate Vertex buffer
-	vBuffer = gl.createBuffer();
-    gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-    gl.bufferData( gl.ARRAY_BUFFER, 16*MAXNUM, gl.STATIC_DRAW );
+	torso();
+	////////////////
 	
-	var vPosition = gl.getAttribLocation( program, "vPosition" );
-    gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( vPosition );
 	
-	//Create and associate Color buffer
-	cBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, 16*MAXNUM, gl.STATIC_DRAW);
 	
-	var vColor = gl.getAttribLocation( program, "vColor");
-    gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(vColor);
-	
-	//Create and associate Normal Buffer
-	
-	nBuffer=gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, 16*MAXNUM, gl.STATIC_DRAW);
-	
-	var vNormal = gl.getAttribLocation (program, "vNormal");
-	gl.vertexAttribPointer(vNormal,4,gl.FLOAT,false,0,0);
-	gl.enableVertexAttribArray(vNormal);
-    */
-    var nBuffer1 = gl.createBuffer();
-    gl.bindBuffer( gl.ARRAY_BUFFER, nBuffer1);
-    gl.bufferData( gl.ARRAY_BUFFER, flatten(nBuffer), gl.STATIC_DRAW );
+	//Buffer of normals
+    var nBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, nBuffer);
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(normalArray), gl.STATIC_DRAW );
     
     var vNormal = gl.getAttribLocation( program, "vNormal" );
     gl.vertexAttribPointer( vNormal, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vNormal);
 
-
-    var vBuffer1 = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer1);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(vBuffer), gl.STATIC_DRAW);
+	//vertex Buffer
+    var vBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(vertexArray), gl.STATIC_DRAW);
     
     var vPosition = gl.getAttribLocation( program, "vPosition");
     gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPosition);
     
+	//ambient color buffer
+	var aBuffer =gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, aBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(ambientArray), gl.STATIC_DRAW);
+    
+    var ambientColor = gl.getAttribLocation( program, "ambientColor");
+    gl.vertexAttribPointer(ambientColor, 4, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(ambientColor);
+	
+	//specular color buffer
+	var spBuffer =gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, spBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(specularArray), gl.STATIC_DRAW);
+    
+    var specularColor = gl.getAttribLocation( program, "specularColor");
+    gl.vertexAttribPointer(specularColor, 4, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(specularColor);
+	
+	//diffuse color buffer
+	var dBuffer =gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, dBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(diffuseArray), gl.STATIC_DRAW);
+    
+    var diffuseColor = gl.getAttribLocation( program, "diffuseColor");
+    gl.vertexAttribPointer(diffuseColor, 4, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(diffuseColor);
+	
+	//shininess buffer
+	var shBuffer =gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, shBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(shininessArray), gl.STATIC_DRAW);
+    
+    var matShininess = gl.getAttribLocation( program, "shininess");
+    gl.vertexAttribPointer(matShininess, 1, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(matShininess);
+	
+	
     modelViewMatrixLoc = gl.getUniformLocation( program, "modelViewMatrix" );
     projectionMatrixLoc = gl.getUniformLocation( program, "projectionMatrix" );
     
     //add other gl setup things here for 3d stuffs and whatnot
-    gl.uniform4fv( gl.getUniformLocation(program, 
-       "ambientProduct"),flatten(ambientProduct) );
-    gl.uniform4fv( gl.getUniformLocation(program, 
-       "diffuseProduct"),flatten(diffuseProduct) );
-    gl.uniform4fv( gl.getUniformLocation(program, 
-       "specularProduct"),flatten(specularProduct) );	
-    gl.uniform4fv( gl.getUniformLocation(program, 
+    
+	gl.uniform4fv( gl.getUniformLocation(program, 
        "lightPosition"),flatten(lightPosition) );
-    gl.uniform1f( gl.getUniformLocation(program, 
-       "shininess"),materialShininess );
-    
+	gl.uniform4fv( gl.getUniformLocation(program, 
+       "lightAmbient"),flatten(lightAmbient) );
+	gl.uniform4fv( gl.getUniformLocation(program, 
+       "lightSpecular"),flatten(lightSpecular) );
+	gl.uniform4fv( gl.getUniformLocation(program, 
+       "lightDiffuse"),flatten(lightDiffuse) );
     //add button/key listeners
-    
+    document.getElementById("incScore").onclick = function(){score++;};
+	
+	
     render();
 
 }
@@ -207,7 +293,7 @@ function render()
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
 
     //drawBackground();
-    score = 1;
+    
 
     if (score > 0){
         drawHead();   
@@ -237,7 +323,7 @@ function drawHead(){
         gl.drawArrays( gl.TRIANGLES, i, 3 );
 }
 function drawTorso(){
-//push the points to the buffers and whatnot
+	gl.drawArrays( gl.TRIANGLES, index, 36 );
 }
 function drawLeftArm(){
 //push the points to the buffers and whatnot

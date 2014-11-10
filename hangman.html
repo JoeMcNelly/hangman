@@ -5,6 +5,17 @@
 
 attribute vec4 vPosition;
 attribute vec4 vNormal;
+
+attribute vec4 specularColor;
+attribute vec4 diffuseColor;
+attribute vec4 ambientColor;
+attribute float shininess;
+
+varying vec4 fspecularColor;
+varying vec4 fdiffuseColor;
+varying vec4 fambientColor;
+varying float fshininess;
+
 varying vec3 N, L, E;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
@@ -18,7 +29,11 @@ void main()
     E =  -pos;
     N = normalize( (modelViewMatrix*vNormal).xyz);
     gl_Position = projectionMatrix * modelViewMatrix * vPosition;
-    
+	
+    fspecularColor=specularColor;
+	fdiffuseColor=diffuseColor;
+	fambientColor=ambientColor;
+	fshininess=shininess;
 }
 </script>
 
@@ -26,14 +41,18 @@ void main()
 
 precision mediump float;
 
-uniform vec4 ambientProduct;
-uniform vec4 diffuseProduct;
-uniform vec4 specularProduct;
-uniform float shininess;
+varying vec4 fspecularColor;
+varying vec4 fdiffuseColor;
+varying vec4 fambientColor;
+varying float fshininess;
+
 varying vec3 N, L, E;
 
 void main()
 {    
+	vec4 ambientProduct= fambientColor;
+	vec4 diffuseProduct= fdiffuseColor;
+	vec4 specularProduct=fspecularColor;
     vec4 fColor;
     
     vec3 H = normalize( L + E );
@@ -42,7 +61,7 @@ void main()
     float Kd = max( dot(L, N), 0.0 );
     vec4  diffuse = Kd*diffuseProduct;
 
-    float Ks = pow( max(dot(N, H), 0.0), shininess );
+    float Ks = pow( max(dot(N, H), 0.0), fshininess );
     vec4  specular = Ks * specularProduct;
     
     if( dot(L, N) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
@@ -62,5 +81,6 @@ void main()
 <canvas id="gl-canvas" width="800" height="800">
 Oops ... your browser doesn't support the HTML5 canvas element
 </canvas>
+<button id="incScore">AAA</Button>
 </body>
 </html>
