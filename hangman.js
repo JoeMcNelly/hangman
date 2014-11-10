@@ -26,18 +26,18 @@ var index=0; //pointer to current location in buffer
 
 //Dude's Torso
 var torsoPoints = [
-    vec4( -0.25, -2,  0.2, 1.0 ),
-    vec4( -0.25,  2,  0.2, 1.0 ),
-    vec4( 0.15,  2,  0.2, 1.0 ),
-    vec4( 0.15, -2,  0.2, 1.0 ),
-    vec4( -0.15, -2, -0.2, 1.0 ),
-    vec4( -0.15,  2, -0.2, 1.0 ),
-    vec4( 0.25,  2, -0.2, 1.0 ),
-    vec4( 0.25, -2, -0.2, 1.0 )
+    vec4( -.8, -2,  0.2, 1.0 ),
+    vec4( -.8,  1,  0.2, 1.0 ),
+    vec4( .8,  1,  0.2, 1.0 ),
+    vec4( .8, -2,  0.2, 1.0 ),
+    vec4( -.8, -2, -0.2, 1.0 ),
+    vec4( -.8,  1, -0.2, 1.0 ),
+    vec4( .8,  1, -0.2, 1.0 ),
+    vec4( .8, -2, -0.2, 1.0 )
 ];
 var torsoAmbColor=vec4(1.0,0.0,0.0,1.0);
-var torsoDiffColor=vec4(1.0,0.8,0.2,1.0);
-var torsoSpecColor=vec4(1.0,0.5,0.5,1.0);
+var torsoDiffColor=vec4(1.0,0.3,0.3,1.0);
+var torsoSpecColor=vec4(1.0,0.3,0.3,1.0);
 var torsoAmb;
 var torsoDiff;
 var torsoSpec;
@@ -45,12 +45,12 @@ var torsoShininess=2.0;
 
 
 
-var near = -10;
-var far = 10;
+var near = -20;
+var far = 20;
 var radius = 2.5;
 var theta  = 0.0;
 var phi    = 0.0;
-
+var dr = 5.0 * Math.PI/180.0;
 
 var left = -6;
 var right = 6;
@@ -59,7 +59,7 @@ var bottom = -6;
 
 
     
-var lightPosition = vec4(1, -1, 1, 0.0 );
+var lightPosition = vec4(1, 1, 1, 0.0 );
 var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
 var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
 var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
@@ -273,7 +273,10 @@ window.onload = function init()
        "lightDiffuse"),flatten(lightDiffuse) );
     //add button/key listeners
     document.getElementById("incScore").onclick = function(){score++;};
-	
+	document.getElementById("Button2").onclick = function(){theta += dr;};
+    document.getElementById("Button3").onclick = function(){theta -= dr;};
+    document.getElementById("Button4").onclick = function(){phi += dr;};
+    document.getElementById("Button5").onclick = function(){phi -= dr;};
 	
     render();
 
@@ -313,7 +316,7 @@ function render()
 	if(score>5){
 		drawRightLeg();
 	}
-     window.requestAnimFrame(render);
+    window.requestAnimFrame(render);
 }
 function drawBackground(){
 //push the points and play destiny
