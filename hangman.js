@@ -372,12 +372,7 @@ window.onload = function init()
 	
 	document.getElementById("life").innerHTML=getLife();
 	
-    document.getElementById("incScore").onclick = function(){score++;};/*
-	document.getElementById("Button2").onclick = function(){theta += dr;};
-    document.getElementById("Button3").onclick = function(){theta -= dr;};
-    document.getElementById("Button4").onclick = function(){phi += dr;};
-    document.getElementById("Button5").onclick = function(){phi -= dr;};
-	*/
+    
 	
 	var reset = document.getElementById("reset");
     reset.addEventListener("click", function(){
@@ -388,31 +383,36 @@ window.onload = function init()
 		var submission = document.getElementById("textBox").value;
 		document.getElementById("textBox").value="";
 		
-		wordToGuess=submission;
+		document.getElementById("invalid").style.visibility='hidden';
 		
-		for (i = 0;i<wordToGuess.length;i++){
-			lettersDisplayable.push(false);
+		if(validWord(submission)){
+			wordToGuess=submission;
+		
+			for (i = 0;i<wordToGuess.length;i++){
+				lettersDisplayable.push(false);
+			}
+		
+		
+			document.getElementById("wordProgress").innerHTML=getDisplayString();
+		
+			document.getElementById("enterWord").style.visibility='hidden';
+			document.getElementById("wordEnter").style.visibility='hidden';
+			document.getElementById("submitButton").style.visibility='visible';
+			document.getElementById("charEnter").style.visibility='visible';
+		}else{
+			document.getElementById("invalid").style.visibility='visible';
 		}
-		
-		document.getElementById("wordProgress").innerHTML=getDisplayString();
-		
-		document.getElementById("enterWord").style.visibility='hidden';
-		document.getElementById("wordEnter").style.visibility='hidden';
-		//document.getElementById("enterWord").style.display='none';
-		//document.getElementById("wordEnter").style.display='none';
-		document.getElementById("submitButton").style.visibility='visible';
-		document.getElementById("charEnter").style.visibility='visible';
 		
 	};
 	document.getElementById("submitButton").onclick = function(){
 		var submission = document.getElementById("textBox").value;
 		document.getElementById("textBox").value="";
-		
+		document.getElementById("invalid").style.visibility='hidden';
 		if(!isValid(submission)){
 			//display:
 				//"Invalid submission. Please pick a letter. Make sure it
-				//hasn't been picked."
-			//TODO
+				//hasn't been picked.
+			document.getElementById("invalid").style.visibility='visible';
 		}else if(isCorrect(submission)){
 			//fill in letters in word
 			
@@ -425,6 +425,7 @@ window.onload = function init()
 			if(allCorrect()){
 				//win win win
 				//TODO
+				document.getElementById("submitButton").disabled=true;
 			}
 			
 		}else{
@@ -439,6 +440,7 @@ window.onload = function init()
 			if (score>5){
 				//Lose lose lose
 				//TODO
+				document.getElementById("submitButton").disabled=true;
 			}
 		}
 		document.getElementById("guessed").innerHTML=getGuessedLetters();
@@ -527,7 +529,7 @@ function getRemainingLetters(){
 function isCorrect(subString){
 	var returnTrue=false;
 	for (i=0;i<wordToGuess.length;i++){
-		if(subString.charAt(0)==wordToGuess.charAt(i)){
+		if(subString.toLowerCase().charAt(0)==wordToGuess.toLowerCase().charAt(i)){
 			returnTrue= true;
 			lettersDisplayable[i]=true;
 		}
@@ -539,11 +541,20 @@ function isValid(subString){
 	if (!(subString.length==1)){
 		return false;
 	}
-	if (!(alphabet.indexOf(subString)>-1)){
+	if (!(alphabet.indexOf(subString.toLowerCase())>-1)){
 		return false;
 	}
-	if (!(lettersLeft.indexOf(subString)>-1)){
+	if (!(lettersLeft.indexOf(subString.toLowerCase())>-1)){
 		return false;
+	}
+	return true;
+}
+
+function validWord(submission){
+	for (i=0;i<submission.length;i++){
+		if (!(alphabet.indexOf(submission.toLowerCase().charAt(i))>-1)){
+			return false;
+		}
 	}
 	return true;
 }
