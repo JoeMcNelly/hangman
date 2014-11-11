@@ -726,6 +726,15 @@ function makePost()//background
     quad3( 6,4,5,7 );
     quad3( 4,6,2,0 );
     quad3( 1,3,7,5 );
+    //rope
+    /*
+    quad6( 0,2,3,1 );
+    quad6( 0,2,3,1 );
+    quad6( 0,2,3,1 );
+    quad6( 0,2,3,1 );
+    quad6( 0,2,3,1 );
+    quad6( 0,2,3,1 );
+    */
 }
 
 
