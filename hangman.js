@@ -9,7 +9,7 @@ var shininessArray = [];
 var normalArray = [];
 var numberOfHeadVertex = 12288;
 var numberOfTorsoVertex = 36;
-var numberOfBackgroundVertex = 102;
+var numberOfBackgroundVertex = 138;
 var numberOfArmVertex = 72;
 var numberOfLegVertex = 36;
 
@@ -132,6 +132,28 @@ var postDiff;
 var postSpec;
 var postShininess=2.0;
 
+//the rope
+var ropePoints = [
+    vec4(-0.1,4,0.1,1),//0
+    vec4(0.1,4,0.1,1),//1
+    vec4(0.1,3,0.1,1),//2
+    vec4(-0.1,3,0.1,1),//3
+    vec4(-0.1,4,-0.1,1),//4
+    vec4(0.1,4,0-.1,1),//5
+    vec4(0.1,3,-0.1,1),//6
+    vec4(-0.1,3,-0.1,1)//7
+];
+
+var ropeAmbColor=vec4(191/255,124/255,52/255,1.0);
+var ropeDiffColor=vec4(191/255,124/255,52/255,1.0);
+var ropeSpecColor=vec4(191/255,124/255,2/255,1.0);
+var ropeAmb;
+var ropeDiff;
+var ropeSpec;
+var ropeShininess=2.0;
+
+
+
 //the ground
 
 var groundPoints = [
@@ -243,6 +265,7 @@ var image2 = new Uint8Array(4*texSize*texSize);
 
 window.onload = function init()
 {
+    alert("init reached")
     canvas = document.getElementById( "gl-canvas" );
     
     gl = WebGLUtils.setupWebGL( canvas );
@@ -275,13 +298,16 @@ window.onload = function init()
     pantsAmb = mult(lightAmbient, pantsAmbColor);
     pantsDiff = mult(lightDiffuse, pantsDiffColor);
     pantsSpec = mult(lightSpecular, pantsSpecColor);
+    ropeAmb = mult(lightAmbient, ropeAmbColor);
+    ropeDiff = mult(lightDiffuse, ropeDiffColor);
+    ropeSpec = mult(lightSpecular, ropeSpecColor);
 
     //POPULATE POINTS
     initTex();
     makePost();
     tetrahedron(va, vb, vc, vd, numTimesToSubdivide);
 	torso();
-    
+    alert("done populating all points")
 	////////////////
 	
 	
@@ -290,7 +316,7 @@ window.onload = function init()
     var nBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, nBuffer);
     gl.bufferData( gl.ARRAY_BUFFER, flatten(normalArray), gl.STATIC_DRAW );
-    
+
     var vNormal = gl.getAttribLocation( program, "vNormal" );
     gl.vertexAttribPointer( vNormal, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vNormal);
@@ -303,25 +329,26 @@ window.onload = function init()
     var vPosition = gl.getAttribLocation( program, "vPosition");
     gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPosition);
-    
+    alert("starting light")
+    alert (ambientArray.length)
 	//ambient color buffer
 	var aBuffer =gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, aBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(ambientArray), gl.STATIC_DRAW);
-    
+    alert("amb")
     var ambientColor = gl.getAttribLocation( program, "ambientColor");
     gl.vertexAttribPointer(ambientColor, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(ambientColor);
-	
+	alert("amb2")
 	//specular color buffer
 	var spBuffer =gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, spBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(specularArray), gl.STATIC_DRAW);
-    
+    alert("spec")
     var specularColor = gl.getAttribLocation( program, "specularColor");
     gl.vertexAttribPointer(specularColor, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(specularColor);
-	
+	alert("spec2")
 	//diffuse color buffer
 	var dBuffer =gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, dBuffer);
@@ -357,7 +384,7 @@ window.onload = function init()
     projectionMatrixLoc = gl.getUniformLocation( program, "projectionMatrix" );
     
     //add other gl setup things here for 3d stuffs and whatnot
-    
+    alert("here1")
 	gl.uniform4fv( gl.getUniformLocation(program, 
        "lightPosition"),flatten(lightPosition) );
 	gl.uniform4fv( gl.getUniformLocation(program, 
@@ -367,7 +394,7 @@ window.onload = function init()
 	gl.uniform4fv( gl.getUniformLocation(program, 
        "lightDiffuse"),flatten(lightDiffuse) );
     //add button/key listeners
-	
+	alert("button listeners reached")
 	document.getElementById("remaining").innerHTML=getRemainingLetters();
 	
 	document.getElementById("life").innerHTML=getLife();
@@ -457,6 +484,7 @@ window.onload = function init()
 }
 function render()
 {
+    alert("render reached")
     //do normal render things
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     
@@ -706,6 +734,7 @@ function torso()
 
 function makePost()//background
 {
+    alert("make-post reached")
     //horizontal post
     quad2( 1, 0, 3, 2 );
     quad2( 2, 3, 7, 6 );
@@ -727,14 +756,14 @@ function makePost()//background
     quad3( 4,6,2,0 );
     quad3( 1,3,7,5 );
     //rope
-    /*
-    quad6( 0,2,3,1 );
-    quad6( 0,2,3,1 );
-    quad6( 0,2,3,1 );
-    quad6( 0,2,3,1 );
-    quad6( 0,2,3,1 );
-    quad6( 0,2,3,1 );
-    */
+    
+    quad6( 0,1,2,3 );
+    quad6(1,5,6,2);
+    quad6(5,4,7,6);
+    quad6(4,0,3,7);
+    quad6(4,5,1,0);
+    quad6(3,2,6,7);
+    alert("make-post finished")
 }
 
 
@@ -917,6 +946,40 @@ function quad5(a, b, c, d) {
 		shininessArray.push(pantsShininess);
 		ambientArray.push(pantsAmb);
 	}
+    
+}
+
+function quad6(a, b, c, d) {
+    var pa = ropePoints[a];
+    var pb = ropePoints[b];
+    var pc = ropePoints[c];
+    var pd = ropePoints[d];
+
+     vertexArray.push(ropePoints[a]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(ropePoints[b]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(ropePoints[c]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(ropePoints[a]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(ropePoints[c]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(ropePoints[d]); 
+     texCoordsArray.push(texCoord[0]);
+     
+    var t1 = subtract(pb,pa)
+	var t2 = subtract(pc,pa)
+	var norm = normalize(cross(t1,t2));
+	norm = vec4(norm);
+	for (var i=0; i<6; i++){
+		normalArray.push(norm);
+		specularArray.push(ropeSpec);
+		diffuseArray.push(ropeDiff);
+		shininessArray.push(ropeShininess);
+		ambientArray.push(ropeAmb);
+	}
+    
     
 }
 
