@@ -159,7 +159,7 @@ var near = -20;
 var far = 20;
 var radius = 2.5;
 var theta  = 0.0;
-var phi    = 0.0;
+var phi    = 0.25;
 var dr = 5.0 * Math.PI/180.0;
 
 var left = -6;
@@ -356,12 +356,12 @@ window.onload = function init()
 	gl.uniform4fv( gl.getUniformLocation(program, 
        "lightDiffuse"),flatten(lightDiffuse) );
     //add button/key listeners
-    document.getElementById("incScore").onclick = function(){score++;};
+    document.getElementById("incScore").onclick = function(){score++;};/*
 	document.getElementById("Button2").onclick = function(){theta += dr;};
     document.getElementById("Button3").onclick = function(){theta -= dr;};
     document.getElementById("Button4").onclick = function(){phi += dr;};
     document.getElementById("Button5").onclick = function(){phi -= dr;};
-	
+	*/
     render();
 
 }
@@ -383,7 +383,7 @@ function render()
 	
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
-
+    theta+=.01;
     drawBackground();
 
     if (score > 0){

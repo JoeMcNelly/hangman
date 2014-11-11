@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-
+<Title>Hangman</Title>
 <script id="vertex-shader" type="x-shader/x-vertex">
 
 attribute vec4 vPosition;
@@ -78,20 +78,42 @@ void main()
     gl_FragColor = fColor*(texture2D(Tex0, fTexCoord));
 }
 </script>
-<button id = "Button2">Increase theta</button>
+<!--<button id = "Button2">Increase theta</button>
 <button id = "Button3">Decrease theta</button>
 <button id = "Button4">Increase phi</button>
-<button id = "Button5">Decrease phi</button>
-
+<button id = "Button5">Decrease phi</button>-->
+<style>
+body {
+    background-image: url("back.jpg");
+    
+}
+#gl-canvas{
+    border-style:outset;
+    border-width:10px;
+    border-color: #585858
+}
+</style>
 <script type="text/javascript" src="./Common/webgl-utils.js"></script>
 <script type="text/javascript" src="./Common/initShaders.js"></script>
 <script type="text/javascript" src="./Common/MV.js"></script>
 <script type="text/javascript" src="hangman.js"></script>
 
 <body>
-<canvas id="gl-canvas" width="800" height="800">
+<div align="center">
+<h1>Hangman in WebGL</h1>
+<h3>Written By: Orry Jarvis and Joe McNelly</h3>
+</div>
+<div class="container" align="center">
+<h1 style="float:left">h1</h1>
+<canvas id="gl-canvas" width="1200" height="900">
 Oops ... your browser doesn't support the HTML5 canvas element
 </canvas>
+
+
+
+
+</table>
+</div>
 <button id="incScore">AAA</Button>
 </body>
 </html>
