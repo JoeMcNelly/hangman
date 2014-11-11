@@ -1,5 +1,6 @@
 var gl;
 var canvas;
+var aspect;
 var vertexArray = [];
 var ambientArray = [];
 var diffuseArray = [];
@@ -407,6 +408,7 @@ window.onload = function init()
     var program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
     
+	aspect = canvas.width / canvas.height;
     
     headAmb = mult(lightAmbient, headAmbColor);
     headDiff = mult(lightDiffuse, headDiffColor);
@@ -525,12 +527,14 @@ function render()
     //do normal render things
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     
-    eye = vec3(radius*Math.sin(theta)*Math.cos(phi), 
-        radius*Math.sin(theta)*Math.sin(phi), radius*Math.cos(theta));
+    eye = vec3(10*Math.sin(theta)*Math.cos(phi), 
+        10*Math.sin(theta)*Math.sin(phi), 10*Math.cos(theta));
 
     modelViewMatrix = lookAt(eye, at , up);
-    projectionMatrix = ortho(left, right, bottom, ytop, near, far);
-    
+    //projectionMatrix = ortho(left, right, bottom, ytop, near, far);
+    projectionMatrix =perspective(90.0, aspect,1,20);
+	
+	
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
 
