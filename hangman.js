@@ -207,8 +207,8 @@ var alphabet=["a","b","c","d","e",
 	"v","w","x","y","z"];
 var lettersLeft=alphabet.slice(0);
 var lettersGuessed=[];
-var wordToGuess=[];
-var wordToDisplay="";
+var wordToGuess="";
+var lettersDisplayable=[];
 var p1Score=0;
 var p2Score=0;
 
@@ -367,6 +367,11 @@ window.onload = function init()
 	gl.uniform4fv( gl.getUniformLocation(program, 
        "lightDiffuse"),flatten(lightDiffuse) );
     //add button/key listeners
+	
+	document.getElementById("remaining").innerHTML=getRemainingLetters();
+	
+	document.getElementById("life").innerHTML=getLife();
+	
     document.getElementById("incScore").onclick = function(){score++;};/*
 	document.getElementById("Button2").onclick = function(){theta += dr;};
     document.getElementById("Button3").onclick = function(){theta -= dr;};
@@ -374,34 +379,73 @@ window.onload = function init()
     document.getElementById("Button5").onclick = function(){phi -= dr;};
 	*/
 	
+	var reset = document.getElementById("reset");
+    reset.addEventListener("click", function(){
+        location.reload();
+    });
+	
+	document.getElementById("enterWord").onclick = function() {
+		var submission = document.getElementById("textBox").value;
+		document.getElementById("textBox").value="";
+		
+		wordToGuess=submission;
+		
+		for (i = 0;i<wordToGuess.length;i++){
+			lettersDisplayable.push(false);
+		}
+		
+		document.getElementById("wordProgress").innerHTML=getDisplayString();
+		
+		document.getElementById("enterWord").style.visibility='hidden';
+		document.getElementById("wordEnter").style.visibility='hidden';
+		//document.getElementById("enterWord").style.display='none';
+		//document.getElementById("wordEnter").style.display='none';
+		document.getElementById("submitButton").style.visibility='visible';
+		document.getElementById("charEnter").style.visibility='visible';
+		
+	};
 	document.getElementById("submitButton").onclick = function(){
 		var submission = document.getElementById("textBox").value;
-		document.getElementById("textBox")="";
+		document.getElementById("textBox").value="";
 		
 		if(!isValid(submission)){
-			//invalid, pick a letter
-			//a letter that isnt already picked
+			//display:
+				//"Invalid submission. Please pick a letter. Make sure it
+				//hasn't been picked."
+			//TODO
 		}else if(isCorrect(submission)){
 			//fill in letters in word
 			
 			//remove from letters left
+			//add to letters guessed
 			var index=lettersLeft.indexOf(submission);
-			if (index > -1){
-				lettersGuessed.push.apply(lettersLeft.splice(index,1));
+			lettersLeft.splice(index,1)
+			lettersGuessed.push(submission);
+			
+			if(allCorrect()){
+				//win win win
+				//TODO
 			}
 			
 		}else{
 			//draw hangman part
 			score++;
 			//remove from letters left
+			//add to letters guessed
 			var index=lettersLeft.indexOf(submission);
-			if (index > -1){
-				lettersGuessed.push.apply(lettersLeft.splice(index,1));
-			}
+			lettersLeft.splice(index,1)
+			lettersGuessed.push(submission);
+			
 			if (score>5){
-				//WIN, NEW TURN
+				//Lose lose lose
+				//TODO
 			}
 		}
+		document.getElementById("guessed").innerHTML=getGuessedLetters();
+		document.getElementById("remaining").innerHTML=getRemainingLetters();
+		document.getElementById("wordProgress").innerHTML=getDisplayString();
+		document.getElementById("life").innerHTML=getLife();
+		
 	};
     render();
 
@@ -448,6 +492,49 @@ function render()
     window.requestAnimFrame(render);
 }
 
+function getLife(){
+	return ""+(6-score);
+}
+function allCorrect(){
+	for (i=0;i<lettersDisplayable.length;i++){
+		if(!(lettersDisplayable[i])){
+			return false;
+		}
+	}
+	return true;
+}
+function getGuessedLetters(){
+	var returnString="";
+	for (i=0;i<lettersGuessed.length;i++){
+		returnString+=lettersGuessed[i];
+		if (!(i==lettersGuessed.length-1)){
+			returnString+=", "
+		}
+	}
+	return returnString;
+}
+
+function getRemainingLetters(){
+	var returnString="";
+	for (i=0;i<lettersLeft.length;i++){
+		returnString+=lettersLeft[i];
+		if (!(i==lettersLeft.length-1)){
+			returnString+=", "
+		}
+	}
+	return returnString;
+}
+function isCorrect(subString){
+	var returnTrue=false;
+	for (i=0;i<wordToGuess.length;i++){
+		if(subString.charAt(0)==wordToGuess.charAt(i)){
+			returnTrue= true;
+			lettersDisplayable[i]=true;
+		}
+	}
+	return returnTrue;
+}
+
 function isValid(subString){
 	if (!(subString.length==1)){
 		return false;
@@ -461,6 +548,20 @@ function isValid(subString){
 	return true;
 }
 
+function getDisplayString(){
+	var returnString="";
+	for (i=0;i<wordToGuess.length;i++){
+		if (lettersDisplayable[i]){
+			returnString+=wordToGuess.charAt(i);
+		}else{
+			returnString+="_";
+		}
+		if(!(i==wordToGuess.length-1)){
+			returnString+=" ";
+		}
+	}
+	return returnString;
+}
 
 function drawBackground(){
     gl.drawArrays( 
