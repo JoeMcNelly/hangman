@@ -391,12 +391,15 @@ window.onload = function init()
 			for (i = 0;i<wordToGuess.length;i++){
 				lettersDisplayable.push(false);
 			}
-		
-		
+            if (wordToGuess.length > 12){
+                document.getElementById("wordProgress").style.fontSize = "20px";
+            }
 			document.getElementById("wordProgress").innerHTML=getDisplayString();
 		
 			document.getElementById("enterWord").style.visibility='hidden';
 			document.getElementById("wordEnter").style.visibility='hidden';
+            document.getElementById("enterWord").style.display='none';
+			document.getElementById("wordEnter").style.display='none';
 			document.getElementById("submitButton").style.visibility='visible';
 			document.getElementById("charEnter").style.visibility='visible';
 		}else{

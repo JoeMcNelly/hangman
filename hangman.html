@@ -103,8 +103,8 @@ body {
         <h1>Hangman in WebGL</h1>
         <h3>Written By: Orry Jarvis and Joe McNelly</h3>
     </div>
-    <div class="container" style="display:inline-block; float:right;">
-         <div style="float:left; padding-left:10px; padding-right:100px;">
+    <div class="container" style="display:inline-block;position:absolute; float:right; white-space: nowrap;">
+         <div style="float:left; padding-left:110px; padding-right:100px; vertical-align:center; white-space: nowrap;">
             <h2>Tries Left:</h2>
             <h2 id="life"></h2>
             <br/><br/><br/><br/><br/>
@@ -115,10 +115,10 @@ body {
             <button id="reset">Start a New Game!</button>
             
         </div>
-        <canvas id="gl-canvas" width="1200" height="900">
+        <canvas id="gl-canvas" width="1100" height="900" align="center">
         Oops ... your browser doesn't support the HTML5 canvas element
         </canvas>
-        <div style="float:right; padding-left:60px; padding-right:30px;">
+        <div style="float:right; padding-left:50px; padding-right=0px; height:100%; position:relative; white-space: nowrap;">
             <h2 id="charEnter" style="visibility:hidden">Enter a letter!</h2>
             <h2 id="wordEnter" style="visibility:visible">Enter a word!</h2>
             <input id="textBox" type="text" placeholder="Enter input here!">
@@ -126,10 +126,10 @@ body {
             <button id="submitButton" style="visibility:hidden">Check!</button>
 			<h4 id="invalid" style="visibility:hidden">Invalid entry. Try Again.</h4>
 			<h1 id="wordProgress"></h1>
-            <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+            <br/><br/><br/><br/><br/><br/><br/><br/><br/>
             <h2>Letters Guessed:</h2>
             <h5 id="guessed"></h5>
-            <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+            <br/><br/><br/><br/><br/><br/><br/><br/><br/>
             <h2>Letters Remaining:</h2>
             <h5 id="remaining"></h5>
         </div>
