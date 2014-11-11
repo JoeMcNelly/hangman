@@ -25,7 +25,7 @@ var headSpecColor=vec4(240.0/255.0,230.0/255.0,140.0/255.0,1.0);
 var headAmb;
 var headDiff;
 var headSpec;
-var headShininess=1000.0;
+var headShininess=1000000.0;
 
 
 //Dude's Torso and appendages
@@ -55,13 +55,36 @@ var torsoPoints = [
     vec4( 1.55, -.5, -0.4, 1.0 ),//20
     vec4( 1.55, -.5, 0.4, 1.0 ),//21
     //left arm sleeve
-    
+    vec4( -1.55, 1, -0.4, 1.0 ),//22  
+    vec4( -1.55, 1, 0.4, 1.0 ),//23 
+    vec4( -1.55, .25, -0.4, 1.0 ),//24
+    vec4( -1.55, .25, 0.4, 1.0 ),//25  
+    vec4( -.8, .25, 0.4, 1.0 ),//26 
+    vec4( -.8, .25, -0.4, 1.0 ),//27 
     //left arm
-
+    vec4( -1.55, .25, 0.4, 1.0 ),//28 
+    vec4( -1.55, .25, -0.4, 1.0 ),//29 
+    vec4( -.8, .25, -0.4, 1.0 ),//30 
+    vec4( -.8, .25, 0.4, 1.0 ),//31 
+    vec4( -1.55, -.5, 0.4, 1.0 ),//32 
+    vec4( -1.55, -.5, -0.4, 1.0 ),//33 
+    vec4( -.8, -.5, -0.4, 1.0 ),//34 
+    vec4( -.8, -.5, 0.4, 1.0 ),//35
     //left leg
-    
+    vec4( -.2, -2, 0.4, 1.0 ),//36 
+    vec4( -.2, -2, -0.4, 1.0 ),//37 
+    vec4( -.8, -5, -0.4, 1.0 ),//38
+    vec4( -.8, -5, 0.4, 1.0 ),//39
+    vec4( -.2, -5, 0.4, 1.0 ),//40 
+    vec4( -.2, -5, -0.4, 1.0 ),//41 
+
     //right leg
-    
+    vec4( .2, -2, -0.4, 1.0 ),//42
+    vec4( .2, -2, 0.4, 1.0 ),//43 
+    vec4( .2, -5, -0.4, 1.0 ),//44
+    vec4( .2, -5, 0.4, 1.0 ),//45
+    vec4( .8, -5, 0.4, 1.0 ),//46 
+    vec4( .8, -5, -0.4, 1.0 ),//47 
 ];
 var torsoAmbColor=vec4(1.0,0.0,0.0,1.0);
 var torsoDiffColor=vec4(1.0,0.3,0.3,1.0);
@@ -71,22 +94,34 @@ var torsoDiff;
 var torsoSpec;
 var torsoShininess=2.0;
 
+
+
+
+//legs lighting
+var pantsAmbColor=vec4(17/255,53/255,114/255,1.0);
+var pantsDiffColor=vec4(.3,.35,114/255,1.0);
+var pantsSpecColor=vec4(0/255,0,114/255,1.0);
+var pantsAmb;
+var pantsDiff;
+var pantsSpec;
+var pantsShininess=2.0;
+
 //the post
 var postPoints = [
-    vec4( -5, 4,  0.2, 1.0 ),//0
-    vec4( -5,  5,  0.2, 1.0 ),//1
+    vec4( -2, 4,  0.2, 1.0 ),//0
+    vec4( -2,  5,  0.2, 1.0 ),//1
     vec4( 5,  5,  0.2, 1.0 ),//2
     vec4( 5, 4,  0.2, 1.0 ),//3
-    vec4( -5, 4, -0.2, 1.0 ),//4
-    vec4( -5,  5, -0.2, 1.0 ),//5
+    vec4( -2, 4, -0.2, 1.0 ),//4
+    vec4( -2,  5, -0.2, 1.0 ),//5
     vec4( 5,  5, -0.2, 1.0 ),//6
     vec4( 5, 4, -0.2, 1.0 ),//7         now start with making the vertical bar
-    vec4(5, -4, 0.2, 1),//8
-    vec4(5,-4, -0.2, 1),//9
+    vec4(5, -6, 0.2, 1),//8
+    vec4(5,-6, -0.2, 1),//9
     vec4(4, 4,0.2,1),//10
     vec4(4,4,-0.2,1),//11
-    vec4(4,-4,0.2,1),//12
-    vec4(4,-4,-0.2,1)//13               
+    vec4(4,-6,0.2,1),//12
+    vec4(4,-6,-0.2,1)//13               
 ];
 
 var postAmbColor=vec4(77/255,32/255,0.0,1.0);
@@ -100,14 +135,14 @@ var postShininess=2.0;
 //the ground
 
 var groundPoints = [
-    vec4(-10,-4,10,1),//0
-    vec4(-10,-5,10,1),//1
-    vec4(10,-4,10,1),//2
-    vec4(10,-5,10,1),//3
-    vec4(-10,-4,-10,1),//4
-    vec4(-10,-5,-10,1),//5
-    vec4(10,-4,-10,1),//6
-    vec4(10,-5,-10,1)//7
+    vec4(-10,-6,10,1),//0
+    vec4(-10,-7,10,1),//1
+    vec4(10,-6,10,1),//2
+    vec4(10,-7,10,1),//3
+    vec4(-10,-6,-10,1),//4
+    vec4(-10,-7,-10,1),//5
+    vec4(10,-6,-10,1),//6
+    vec4(10,-7,-10,1)//7
 ];
 
 
@@ -190,293 +225,10 @@ var image2 = new Uint8Array(4*texSize*texSize);
             image2[4*i*texSize+4*j+3] = 255;
         }
     }
-
-function initTex(){
-texture2 = gl.createTexture();
-    gl.bindTexture( gl.TEXTURE_2D, texture2 );
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, texSize, texSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, image2);
-    gl.generateMipmap( gl.TEXTURE_2D );
-    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, 
-                      gl.NEAREST_MIPMAP_LINEAR );
-    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-} 
+//end global variables
 
 
-
-
-
-
-function quad(a, b, c, d) {
-    
-    var pa = torsoPoints[a];
-    var pb = torsoPoints[b];
-    var pc = torsoPoints[c];
-    var pd = torsoPoints[d];
-
-     vertexArray.push(torsoPoints[a]); 
- 
-     vertexArray.push(torsoPoints[b]); 
-
-     vertexArray.push(torsoPoints[c]); 
-   
-     vertexArray.push(torsoPoints[a]); 
-
-     vertexArray.push(torsoPoints[c]); 
-
-     vertexArray.push(torsoPoints[d]); 
-     texCoordsArray.push(texCoord[0]);
-     texCoordsArray.push(texCoord[1]);
-     texCoordsArray.push(texCoord[2]);
-     texCoordsArray.push(texCoord[0]);
-     texCoordsArray.push(texCoord[2]);
-     texCoordsArray.push(texCoord[3]);
-     
-    var t1 = subtract(pb,pa)
-	var t2 = subtract(pc,pa)
-	var norm = normalize(cross(t1,t2));
-	norm = vec4(norm);
-	for (var i=0; i<6; i++){
-		normalArray.push(norm);
-		specularArray.push(torsoSpec);
-		diffuseArray.push(torsoDiff);
-		shininessArray.push(torsoShininess);
-		ambientArray.push(torsoAmb);
-	}
-    
-}
-
-function torso()
-{
-    //body
-    quad( 1, 0, 3, 2 );
-    quad( 2, 3, 7, 6 );
-    quad( 3, 0, 4, 7 );
-    quad( 6, 5, 1, 2 );
-    quad( 4, 5, 6, 7 );
-    quad( 5, 4, 0, 1 );
-    //right sleeve
-    quad( 2, 8, 13, 12 );
-    quad( 8, 9, 10, 13 );
-    quad( 12, 13, 10, 11 );
-    quad( 11, 10, 9, 6 );
-    quad( 6, 9, 8, 2 );
-    quad( 6, 2, 12, 11 );
-    //right arm
-    quad4(14,18,21,17);
-    quad4(15,19,18,14);
-    quad4(16,20,19,15);
-    quad4(17,21,20,16);
-    quad4(18,19,20,21);
-    quad4(15,14,17,16);
-    //left sleeve
-    quad( 2, 8, 13, 12 );
-    quad( 8, 9, 10, 13 );
-    quad( 12, 13, 10, 11 );
-    quad( 11, 10, 9, 6 );
-    quad( 6, 9, 8, 2 );
-    quad( 6, 2, 12, 11 );
-    //left arm
-    quad4(1,1,1,1);
-    quad4(1,1,1,1);
-    quad4(1,1,1,1);
-    quad4(1,1,1,1);
-    quad4(1,1,1,1);
-    quad4(1,1,1,1);
-}
-
-function quad2(a, b, c, d) {
-    
-    var pa = postPoints[a];
-    var pb = postPoints[b];
-    var pc = postPoints[c];
-    var pd = postPoints[d];
-
-     vertexArray.push(postPoints[a]); 
-    texCoordsArray.push(texCoord[0]);
-     vertexArray.push(postPoints[b]); 
-    texCoordsArray.push(texCoord[0]);
-     vertexArray.push(postPoints[c]); 
-    texCoordsArray.push(texCoord[0]);
-     vertexArray.push(postPoints[a]); 
-    texCoordsArray.push(texCoord[0]);
-     vertexArray.push(postPoints[c]); 
-    texCoordsArray.push(texCoord[0]);
-     vertexArray.push(postPoints[d]); 
-     texCoordsArray.push(texCoord[0]);
-     
-    var t1 = subtract(pb,pa)
-	var t2 = subtract(pc,pa)
-	var norm = normalize(cross(t1,t2));
-	norm = vec4(norm);
-	for (var i=0; i<6; i++){
-		normalArray.push(norm);
-		specularArray.push(postSpec);
-		diffuseArray.push(postDiff);
-		shininessArray.push(postShininess);
-		ambientArray.push(postAmb);
-	}
-    
-}
-
-function quad3(a, b, c, d) {
-    
-    var pa = groundPoints[a];
-    var pb = groundPoints[b];
-    var pc = groundPoints[c];
-    var pd = groundPoints[d];
-
-     vertexArray.push(groundPoints[a]); 
-    texCoordsArray.push(texCoord[0]);
-     vertexArray.push(groundPoints[b]); 
-    texCoordsArray.push(texCoord[0]);
-     vertexArray.push(groundPoints[c]); 
-    texCoordsArray.push(texCoord[0]);
-     vertexArray.push(groundPoints[a]); 
-    texCoordsArray.push(texCoord[0]);
-     vertexArray.push(groundPoints[c]); 
-    texCoordsArray.push(texCoord[0]);
-     vertexArray.push(groundPoints[d]); 
-     texCoordsArray.push(texCoord[0]);
-     
-    var t1 = subtract(pb,pa)
-	var t2 = subtract(pc,pa)
-	var norm = normalize(cross(t1,t2));
-	norm = vec4(norm);
-	for (var i=0; i<6; i++){
-		normalArray.push(norm);
-		specularArray.push(groundSpec);
-		diffuseArray.push(groundDiff);
-		shininessArray.push(groundShininess);
-		ambientArray.push(groundAmb);
-	}
-    
-}
-
-function quad4(a, b, c, d) {
-    
-    var pa = torsoPoints[a];
-    var pb = torsoPoints[b];
-    var pc = torsoPoints[c];
-    var pd = torsoPoints[d];
-
-     vertexArray.push(torsoPoints[a]); 
-    texCoordsArray.push(texCoord[0]);
-     vertexArray.push(torsoPoints[b]); 
-    texCoordsArray.push(texCoord[0]);
-     vertexArray.push(torsoPoints[c]); 
-    texCoordsArray.push(texCoord[0]);
-     vertexArray.push(torsoPoints[a]); 
-    texCoordsArray.push(texCoord[0]);
-     vertexArray.push(torsoPoints[c]); 
-    texCoordsArray.push(texCoord[0]);
-     vertexArray.push(torsoPoints[d]); 
-     texCoordsArray.push(texCoord[0]);
-     
-    var t1 = subtract(pb,pa)
-	var t2 = subtract(pc,pa)
-	var norm = normalize(cross(t1,t2));
-	norm = vec4(norm);
-	for (var i=0; i<6; i++){
-		normalArray.push(norm);
-		specularArray.push(headSpec);
-		diffuseArray.push(headDiff);
-		shininessArray.push(headShininess);
-		ambientArray.push(headAmb);
-	}
-    
-}
-
-
-function makePost()
-{
-    //horizontal post
-    quad2( 1, 0, 3, 2 );
-    quad2( 2, 3, 7, 6 );
-    quad2( 3, 0, 4, 7 );
-    quad2( 6, 5, 1, 2 );
-    quad2( 4, 5, 6, 7 );
-    quad2( 5, 4, 0, 1 );
-    //vertical post
-    quad2( 10, 3, 8, 12 );
-    quad2( 3, 7, 9, 8 );
-    quad2( 11, 10, 12, 13 );
-    quad2( 7, 11, 13, 9 );
-    quad2( 12, 8, 13, 9 );
-    //ground
-    /*
-    quad3(0,2,3,1);//front
-    quad3(2,6,7,3);//
-    quad3(4,0,1,5);//
-    quad3(4,6,7,5);//back
-    quad3(4,2,6,0);//
-    quad3(5,3,7,1);//
-    */
-    quad3( 0,2,3,1 );
-    quad3( 2,6,7,3 );
-    quad3( 4,0,1,5 );
-    quad3( 6,4,5,7 );
-    quad3( 4,6,2,0 );
-    quad3( 1,3,7,5 );
-}
-
-function triangle(a,b,c){
-
-	var t1 = subtract(b,a)
-	var t2 = subtract(c,a)
-	var norm = normalize(cross(t1,t2));
-	norm = vec4(norm);
-	for (var i=0; i<3; i++){
-		normalArray.push(norm);
-		specularArray.push(headSpec);
-		diffuseArray.push(headDiff);
-		shininessArray.push(headShininess);
-		ambientArray.push(headAmb);
-	}
-    
-    a= vec4(a[0], a[1] + 2, a[2], a[3])
-    b= vec4(b[0], b[1] + 2, b[2], b[3])
-    c= vec4(c[0], c[1] + 2, c[2], c[3])
-    
-	vertexArray.push(a);
-	vertexArray.push(b);
-	vertexArray.push(c);
-    texCoordsArray.push(texCoord[0]);
-    texCoordsArray.push(texCoord[0]);
-    texCoordsArray.push(texCoord[0]);
-}
-function divideTriangle(a, b, c, count) {
-    if ( count > 0 ) {
-                
-        var ab = mix( a, b, 0.5);
-        var ac = mix( a, c, 0.5);
-        var bc = mix( b, c, 0.5);
-                
-        ab = normalize(ab, true);
-        ac = normalize(ac, true);
-        bc = normalize(bc, true);
-                                
-        divideTriangle( a, ab, ac, count - 1 );
-        divideTriangle( ab, b, bc, count - 1 );
-        divideTriangle( bc, c, ac, count - 1 );
-        divideTriangle( ab, bc, ac, count - 1 );
-    }
-    else { 
-        triangle( a, b, c );
-    }
-}
-
-
-function tetrahedron(a, b, c, d, n) {
-    divideTriangle(a, b, c, n);
-    divideTriangle(d, c, b, n);
-    divideTriangle(a, d, b, n);
-    divideTriangle(a, c, d, n);
-}
-
-
-
+//init on load function
 
 window.onload = function init()
 {
@@ -509,6 +261,9 @@ window.onload = function init()
     groundAmb = mult(lightAmbient, groundAmbColor);
     groundDiff = mult(lightDiffuse, groundDiffColor);
     groundSpec = mult(lightSpecular, groundSpecColor);
+    pantsAmb = mult(lightAmbient, pantsAmbColor);
+    pantsDiff = mult(lightDiffuse, pantsDiffColor);
+    pantsSpec = mult(lightSpecular, pantsSpecColor);
 
     //POPULATE POINTS
     initTex();
@@ -703,4 +458,346 @@ function drawRightLeg(){
             2*numberOfArmVertex+
             numberOfLegVertex, 
         numberOfLegVertex );
+}
+
+
+
+//Helper methods 
+
+
+//initialize the texture map
+function initTex(){
+    texture2 = gl.createTexture();
+    gl.bindTexture( gl.TEXTURE_2D, texture2 );
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, texSize, texSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, image2);
+    gl.generateMipmap( gl.TEXTURE_2D );
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, 
+                      gl.NEAREST_MIPMAP_LINEAR );
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+} 
+
+
+function torso()
+{
+    //body
+    quad( 1, 0, 3, 2 );
+    quad( 2, 3, 7, 6 );
+    quad( 3, 0, 4, 7 );
+    quad( 6, 5, 1, 2 );
+    quad( 4, 5, 6, 7 );
+    quad( 5, 4, 0, 1 );
+    //right sleeve
+    quad( 2, 8, 13, 12 );
+    quad( 8, 9, 10, 13 );
+    quad( 12, 13, 10, 11 );
+    quad( 11, 10, 9, 6 );
+    quad( 6, 9, 8, 2 );
+    quad( 6, 2, 12, 11 );
+    //right arm
+    quad4(14,18,21,17);
+    quad4(15,19,18,14);
+    quad4(16,20,19,15);
+    quad4(17,21,20,16);
+    quad4(18,19,20,21);
+    quad4(15,14,17,16);
+    //left sleeve
+    quad( 23, 25, 26, 1 );
+    quad( 25, 24, 27, 26 );
+    quad( 22, 23, 1, 5 );
+    quad( 1, 26, 27, 5 );
+    quad( 5, 27, 24, 22 );
+    quad( 22, 24, 25, 23 );
+    //left arm
+    quad4(28,32,35,31);
+    quad4(29,33,32,28);
+    quad4(30,34,33,29);
+    quad4(31,35,34,30);
+    quad4(32,33,34,35);
+    quad4(29,28,31,30);
+    //left leg
+    quad5(0,39,40,41);
+    quad5(36,40,41,37);
+    quad5(37,41,38,4);
+    quad5(4,38,39,0);
+    quad5(39,38,41,40);
+    quad5(4,0,36,37);
+    //right leg
+    quad5(43,45,46,3);
+    quad5(3,46,47,7);
+    quad5(7,47,44,42);
+    quad5(42,44,45,43);
+    quad5(42,43,3,7);
+    quad5(45,44,47,46);
+}
+
+
+function makePost()//background
+{
+    //horizontal post
+    quad2( 1, 0, 3, 2 );
+    quad2( 2, 3, 7, 6 );
+    quad2( 3, 0, 4, 7 );
+    quad2( 6, 5, 1, 2 );
+    quad2( 4, 5, 6, 7 );
+    quad2( 5, 4, 0, 1 );
+    //vertical post
+    quad2( 10, 3, 8, 12 );
+    quad2( 3, 7, 9, 8 );
+    quad2( 11, 10, 12, 13 );
+    quad2( 7, 11, 13, 9 );
+    quad2( 12, 8, 13, 9 );
+    //ground
+    quad3( 0,2,3,1 );
+    quad3( 2,6,7,3 );
+    quad3( 4,0,1,5 );
+    quad3( 6,4,5,7 );
+    quad3( 4,6,2,0 );
+    quad3( 1,3,7,5 );
+}
+
+
+
+
+/*
+"Block" Helper methods(torso, post, arms, etc.)
+*/
+
+function quad(a, b, c, d) {
+    
+    var pa = torsoPoints[a];
+    var pb = torsoPoints[b];
+    var pc = torsoPoints[c];
+    var pd = torsoPoints[d];
+
+     vertexArray.push(torsoPoints[a]); 
+ 
+     vertexArray.push(torsoPoints[b]); 
+
+     vertexArray.push(torsoPoints[c]); 
+   
+     vertexArray.push(torsoPoints[a]); 
+
+     vertexArray.push(torsoPoints[c]); 
+
+     vertexArray.push(torsoPoints[d]); 
+     texCoordsArray.push(texCoord[0]);
+     texCoordsArray.push(texCoord[1]);
+     texCoordsArray.push(texCoord[2]);
+     texCoordsArray.push(texCoord[0]);
+     texCoordsArray.push(texCoord[2]);
+     texCoordsArray.push(texCoord[3]);
+     
+    var t1 = subtract(pb,pa)
+	var t2 = subtract(pc,pa)
+	var norm = normalize(cross(t1,t2));
+	norm = vec4(norm);
+	for (var i=0; i<6; i++){
+		normalArray.push(norm);
+		specularArray.push(torsoSpec);
+		diffuseArray.push(torsoDiff);
+		shininessArray.push(torsoShininess);
+		ambientArray.push(torsoAmb);
+	}
+    
+}
+
+function quad2(a, b, c, d) {
+    
+    var pa = postPoints[a];
+    var pb = postPoints[b];
+    var pc = postPoints[c];
+    var pd = postPoints[d];
+
+     vertexArray.push(postPoints[a]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(postPoints[b]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(postPoints[c]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(postPoints[a]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(postPoints[c]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(postPoints[d]); 
+     texCoordsArray.push(texCoord[0]);
+     
+    var t1 = subtract(pb,pa)
+	var t2 = subtract(pc,pa)
+	var norm = normalize(cross(t1,t2));
+	norm = vec4(norm);
+	for (var i=0; i<6; i++){
+		normalArray.push(norm);
+		specularArray.push(postSpec);
+		diffuseArray.push(postDiff);
+		shininessArray.push(postShininess);
+		ambientArray.push(postAmb);
+	}
+    
+}
+
+function quad3(a, b, c, d) {
+    
+    var pa = groundPoints[a];
+    var pb = groundPoints[b];
+    var pc = groundPoints[c];
+    var pd = groundPoints[d];
+
+     vertexArray.push(groundPoints[a]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(groundPoints[b]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(groundPoints[c]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(groundPoints[a]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(groundPoints[c]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(groundPoints[d]); 
+     texCoordsArray.push(texCoord[0]);
+     
+    var t1 = subtract(pb,pa)
+	var t2 = subtract(pc,pa)
+	var norm = normalize(cross(t1,t2));
+	norm = vec4(norm);
+	for (var i=0; i<6; i++){
+		normalArray.push(norm);
+		specularArray.push(groundSpec);
+		diffuseArray.push(groundDiff);
+		shininessArray.push(groundShininess);
+		ambientArray.push(groundAmb);
+	}
+    
+}
+
+function quad4(a, b, c, d) {
+    
+    var pa = torsoPoints[a];
+    var pb = torsoPoints[b];
+    var pc = torsoPoints[c];
+    var pd = torsoPoints[d];
+
+     vertexArray.push(torsoPoints[a]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(torsoPoints[b]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(torsoPoints[c]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(torsoPoints[a]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(torsoPoints[c]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(torsoPoints[d]); 
+     texCoordsArray.push(texCoord[0]);
+     
+    var t1 = subtract(pb,pa)
+	var t2 = subtract(pc,pa)
+	var norm = normalize(cross(t1,t2));
+	norm = vec4(norm);
+	for (var i=0; i<6; i++){
+		normalArray.push(norm);
+		specularArray.push(headSpec);
+		diffuseArray.push(headDiff);
+		shininessArray.push(headShininess);
+		ambientArray.push(headAmb);
+	}
+    
+}
+
+
+function quad5(a, b, c, d) {
+    
+    var pa = torsoPoints[a];
+    var pb = torsoPoints[b];
+    var pc = torsoPoints[c];
+    var pd = torsoPoints[d];
+
+     vertexArray.push(torsoPoints[a]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(torsoPoints[b]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(torsoPoints[c]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(torsoPoints[a]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(torsoPoints[c]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(torsoPoints[d]); 
+     texCoordsArray.push(texCoord[0]);
+     
+    var t1 = subtract(pb,pa)
+	var t2 = subtract(pc,pa)
+	var norm = normalize(cross(t1,t2));
+	norm = vec4(norm);
+	for (var i=0; i<6; i++){
+		normalArray.push(norm);
+		specularArray.push(pantsSpec);
+		diffuseArray.push(pantsDiff);
+		shininessArray.push(pantsShininess);
+		ambientArray.push(pantsAmb);
+	}
+    
+}
+
+//End "block" helper methods
+
+
+
+/*
+Helper methods for drawing the head
+*/
+
+function triangle(a,b,c){
+
+	var t1 = subtract(b,a)
+	var t2 = subtract(c,a)
+	var norm = normalize(cross(t1,t2));
+	norm = vec4(norm);
+	for (var i=0; i<3; i++){
+		normalArray.push(norm);
+		specularArray.push(headSpec);
+		diffuseArray.push(headDiff);
+		shininessArray.push(headShininess);
+		ambientArray.push(headAmb);
+	}
+    
+    a= vec4(a[0], a[1] + 2, a[2], a[3])
+    b= vec4(b[0], b[1] + 2, b[2], b[3])
+    c= vec4(c[0], c[1] + 2, c[2], c[3])
+    
+	vertexArray.push(a);
+	vertexArray.push(b);
+	vertexArray.push(c);
+    texCoordsArray.push(texCoord[0]);
+    texCoordsArray.push(texCoord[0]);
+    texCoordsArray.push(texCoord[0]);
+}
+function divideTriangle(a, b, c, count) {
+    if ( count > 0 ) {
+                
+        var ab = mix( a, b, 0.5);
+        var ac = mix( a, c, 0.5);
+        var bc = mix( b, c, 0.5);
+                
+        ab = normalize(ab, true);
+        ac = normalize(ac, true);
+        bc = normalize(bc, true);
+                                
+        divideTriangle( a, ab, ac, count - 1 );
+        divideTriangle( ab, b, bc, count - 1 );
+        divideTriangle( bc, c, ac, count - 1 );
+        divideTriangle( ab, bc, ac, count - 1 );
+    }
+    else { 
+        triangle( a, b, c );
+    }
+}
+
+
+function tetrahedron(a, b, c, d, n) {
+    divideTriangle(a, b, c, n);
+    divideTriangle(d, c, b, n);
+    divideTriangle(a, d, b, n);
+    divideTriangle(a, c, d, n);
 }
