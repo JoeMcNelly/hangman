@@ -179,7 +179,7 @@ var groundShininess=2.0;
 
 var near = -20;
 var far = 20;
-var radius = 2.5;
+var radius = 4.5;
 var theta  = 0.0;
 var phi    = 0.25;
 var dr = 5.0 * Math.PI/180.0;
@@ -191,7 +191,7 @@ var bottom = -6;
 
 
     
-var lightPosition = vec4(7, 5, 7, 0.0 );
+var lightPosition = vec4(10, 10, 7, 1.0 );//7-5-7-0
 var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
 var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
 var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
@@ -265,7 +265,7 @@ var image2 = new Uint8Array(4*texSize*texSize);
 
 window.onload = function init()
 {
-    alert("init reached")
+
     canvas = document.getElementById( "gl-canvas" );
     
     gl = WebGLUtils.setupWebGL( canvas );
@@ -307,7 +307,7 @@ window.onload = function init()
     makePost();
     tetrahedron(va, vb, vc, vd, numTimesToSubdivide);
 	torso();
-    alert("done populating all points")
+
 	////////////////
 	
 	
@@ -329,26 +329,26 @@ window.onload = function init()
     var vPosition = gl.getAttribLocation( program, "vPosition");
     gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPosition);
-    alert("starting light")
-    alert (ambientArray.length)
+
+
 	//ambient color buffer
 	var aBuffer =gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, aBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(ambientArray), gl.STATIC_DRAW);
-    alert("amb")
+
     var ambientColor = gl.getAttribLocation( program, "ambientColor");
     gl.vertexAttribPointer(ambientColor, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(ambientColor);
-	alert("amb2")
+	
 	//specular color buffer
 	var spBuffer =gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, spBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(specularArray), gl.STATIC_DRAW);
-    alert("spec")
+   
     var specularColor = gl.getAttribLocation( program, "specularColor");
     gl.vertexAttribPointer(specularColor, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(specularColor);
-	alert("spec2")
+	
 	//diffuse color buffer
 	var dBuffer =gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, dBuffer);
@@ -384,7 +384,7 @@ window.onload = function init()
     projectionMatrixLoc = gl.getUniformLocation( program, "projectionMatrix" );
     
     //add other gl setup things here for 3d stuffs and whatnot
-    alert("here1")
+   
 	gl.uniform4fv( gl.getUniformLocation(program, 
        "lightPosition"),flatten(lightPosition) );
 	gl.uniform4fv( gl.getUniformLocation(program, 
@@ -394,7 +394,7 @@ window.onload = function init()
 	gl.uniform4fv( gl.getUniformLocation(program, 
        "lightDiffuse"),flatten(lightDiffuse) );
     //add button/key listeners
-	alert("button listeners reached")
+	
 	document.getElementById("remaining").innerHTML=getRemainingLetters();
 	
 	document.getElementById("life").innerHTML=getLife();
@@ -484,7 +484,7 @@ window.onload = function init()
 }
 function render()
 {
-    alert("render reached")
+   
     //do normal render things
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     
@@ -734,7 +734,7 @@ function torso()
 
 function makePost()//background
 {
-    alert("make-post reached")
+   
     //horizontal post
     quad2( 1, 0, 3, 2 );
     quad2( 2, 3, 7, 6 );
@@ -763,7 +763,7 @@ function makePost()//background
     quad6(4,0,3,7);
     quad6(4,5,1,0);
     quad6(3,2,6,7);
-    alert("make-post finished")
+    
 }
 
 
