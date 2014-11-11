@@ -10,7 +10,7 @@ var normalArray = [];
 var numberOfHeadVertex = 12288;
 var numberOfTorsoVertex = 36;
 var numberOfBackgroundVertex = 102;
-var numberOfArmVertex = 36;
+var numberOfArmVertex = 72;
 var numberOfLegVertex = 36;
 
 //Dudes head
@@ -28,16 +28,40 @@ var headSpec;
 var headShininess=1000.0;
 
 
-//Dude's Torso
+//Dude's Torso and appendages
 var torsoPoints = [
-    vec4( -.8, -2,  0.4, 1.0 ),
-    vec4( -.8,  1,  0.4, 1.0 ),
-    vec4( .8,  1,  0.4, 1.0 ),
-    vec4( .8, -2,  0.4, 1.0 ),
-    vec4( -.8, -2, -0.4, 1.0 ),
-    vec4( -.8,  1, -0.4, 1.0 ),
-    vec4( .8,  1, -0.4, 1.0 ),
-    vec4( .8, -2, -0.4, 1.0 )
+    vec4( -.8, -2,  0.4, 1.0 ),//0
+    vec4( -.8,  1,  0.4, 1.0 ),//1
+    vec4( .8,  1,  0.4, 1.0 ),//2
+    vec4( .8, -2,  0.4, 1.0 ),//3
+    vec4( -.8, -2, -0.4, 1.0 ),//4
+    vec4( -.8,  1, -0.4, 1.0 ),//5
+    vec4( .8,  1, -0.4, 1.0 ),//6
+    vec4( .8, -2, -0.4, 1.0 ),  //7
+    //right arm sleeve
+    vec4( .8, .25, 0.4, 1.0 ),//8  
+    vec4( .8, .25, -0.4, 1.0 ),//9  
+    vec4( 1.55, .25, -0.4, 1.0 ),//10 
+    vec4( 1.55, 1, -0.4, 1.0 ),//11 
+    vec4( 1.55, 1, 0.4, 1.0 ),//12 
+    vec4( 1.55, .25, 0.4, 1.0 ),//13 
+    //right arm
+    vec4( .8, .25, 0.4, 1.0 ),//14 
+    vec4( .8, .25, -0.4, 1.0 ),//15  
+    vec4( 1.55, .25, -0.4, 1.0 ),//16 
+    vec4( 1.55, .25, 0.4, 1.0 ),//17
+    vec4( .8, -.5, 0.4, 1.0 ),//18
+    vec4( .8, -.5, -0.4, 1.0 ),//19
+    vec4( 1.55, -.5, -0.4, 1.0 ),//20
+    vec4( 1.55, -.5, 0.4, 1.0 ),//21
+    //left arm sleeve
+    
+    //left arm
+
+    //left leg
+    
+    //right leg
+    
 ];
 var torsoAmbColor=vec4(1.0,0.0,0.0,1.0);
 var torsoDiffColor=vec4(1.0,0.3,0.3,1.0);
@@ -110,7 +134,7 @@ var bottom = -6;
 
 
     
-var lightPosition = vec4(1, 1, 1, 0.0 );
+var lightPosition = vec4(7, 5, 7, 0.0 );
 var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
 var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
 var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
@@ -225,12 +249,41 @@ function quad(a, b, c, d) {
 
 function torso()
 {
+    //body
     quad( 1, 0, 3, 2 );
     quad( 2, 3, 7, 6 );
     quad( 3, 0, 4, 7 );
     quad( 6, 5, 1, 2 );
     quad( 4, 5, 6, 7 );
     quad( 5, 4, 0, 1 );
+    //right sleeve
+    quad( 2, 8, 13, 12 );
+    quad( 8, 9, 10, 13 );
+    quad( 12, 13, 10, 11 );
+    quad( 11, 10, 9, 6 );
+    quad( 6, 9, 8, 2 );
+    quad( 6, 2, 12, 11 );
+    //right arm
+    quad4(14,18,21,17);
+    quad4(15,19,18,14);
+    quad4(16,20,19,15);
+    quad4(17,21,20,16);
+    quad4(18,19,20,21);
+    quad4(15,14,17,16);
+    //left sleeve
+    quad( 2, 8, 13, 12 );
+    quad( 8, 9, 10, 13 );
+    quad( 12, 13, 10, 11 );
+    quad( 11, 10, 9, 6 );
+    quad( 6, 9, 8, 2 );
+    quad( 6, 2, 12, 11 );
+    //left arm
+    quad4(1,1,1,1);
+    quad4(1,1,1,1);
+    quad4(1,1,1,1);
+    quad4(1,1,1,1);
+    quad4(1,1,1,1);
+    quad4(1,1,1,1);
 }
 
 function quad2(a, b, c, d) {
@@ -297,6 +350,40 @@ function quad3(a, b, c, d) {
 		diffuseArray.push(groundDiff);
 		shininessArray.push(groundShininess);
 		ambientArray.push(groundAmb);
+	}
+    
+}
+
+function quad4(a, b, c, d) {
+    
+    var pa = torsoPoints[a];
+    var pb = torsoPoints[b];
+    var pc = torsoPoints[c];
+    var pd = torsoPoints[d];
+
+     vertexArray.push(torsoPoints[a]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(torsoPoints[b]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(torsoPoints[c]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(torsoPoints[a]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(torsoPoints[c]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(torsoPoints[d]); 
+     texCoordsArray.push(texCoord[0]);
+     
+    var t1 = subtract(pb,pa)
+	var t2 = subtract(pc,pa)
+	var norm = normalize(cross(t1,t2));
+	norm = vec4(norm);
+	for (var i=0; i<6; i++){
+		normalArray.push(norm);
+		specularArray.push(headSpec);
+		diffuseArray.push(headDiff);
+		shininessArray.push(headShininess);
+		ambientArray.push(headAmb);
 	}
     
 }
@@ -425,9 +512,10 @@ window.onload = function init()
 
     //POPULATE POINTS
     initTex();
+    makePost();
     tetrahedron(va, vb, vc, vd, numTimesToSubdivide);
 	torso();
-    makePost();
+    
 	////////////////
 	
 	
@@ -529,10 +617,13 @@ function render()
     
     eye = vec3(10*Math.sin(theta)*Math.cos(phi), 
         10*Math.sin(theta)*Math.sin(phi), 10*Math.cos(theta));
-
+        
+    /*eye = vec3(radius*Math.sin(theta)*Math.cos(phi), 
+        radius*Math.sin(theta)*Math.sin(phi), radius*Math.cos(theta));
+        */
     modelViewMatrix = lookAt(eye, at , up);
     //projectionMatrix = ortho(left, right, bottom, ytop, near, far);
-    projectionMatrix =perspective(90.0, aspect,1,20);
+    projectionMatrix =perspective(90, aspect,1,20);
 	
 	
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
@@ -563,18 +654,18 @@ function render()
 function drawBackground(){
     gl.drawArrays( 
         gl.TRIANGLES,
-            numberOfHeadVertex+
-            numberOfTorsoVertex, 
+            0, 
         numberOfBackgroundVertex );
 }
 function drawHead(){
     for( var i=0; i<numberOfHeadVertex; i+=3) 
-        gl.drawArrays( gl.TRIANGLES, i, 3 );
+        gl.drawArrays( gl.TRIANGLES, i + numberOfBackgroundVertex , 3 );
 }
 function drawTorso(){
 	gl.drawArrays( 
         gl.TRIANGLES, 
-            numberOfHeadVertex, 
+            numberOfHeadVertex+
+            numberOfBackgroundVertex, 
         numberOfTorsoVertex );
 }
 function drawLeftArm(){
