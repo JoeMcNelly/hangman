@@ -99,29 +99,31 @@ body {
 <script type="text/javascript" src="hangman.js"></script>
 
 <body>
-<div align="center">
-<h1>Hangman in WebGL</h1>
-<h3>Written By: Orry Jarvis and Joe McNelly</h3>
-</div>
-<div class="container" style="display:inline-block; float:right;">
-<h1 style="float:left">h1</h1>
-<canvas id="gl-canvas" width="1200" height="900">
-Oops ... your browser doesn't support the HTML5 canvas element
-</canvas>
-<div style="float:right; padding-left:60px; padding-right:30px;">
-<h2 >Enter a letter!</h2>
-<input id="textBox" type="text" placeholder="Enter a letter!">
-<button class="btn btn-info" id="submitButton">Check!</button>
-
-<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-<h2>Letters Guessed:</h2>
-<h5 id="guessed"></h5>
-
-<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-<h2>Letters Remaining:</h2>
-<h5 id="remaining">1 1 1 1 11 1 1 1 11 1 1 1 1 11 1 1 1 1 1 11 1 1<br/> 1221212  21211212</h5>
-</div>
-</div>
-<button id="incScore">AAA</Button>
+    <div align="center">
+        <h1>Hangman in WebGL</h1>
+        <h3>Written By: Orry Jarvis and Joe McNelly</h3>
+    </div>
+    <div class="container" style="display:inline-block; float:right;">
+         <div style="float:left; padding-left:10px; padding-right:100px;">
+             <button id="incScore">Test</Button>
+        </div>
+        <canvas id="gl-canvas" width="1200" height="900">
+        Oops ... your browser doesn't support the HTML5 canvas element
+        </canvas>
+        <div style="float:right; padding-left:60px; padding-right:30px;">
+            <h2 id="charEnter" style="visibility:hidden">Enter a letter!</h2>
+            <h2 id="wordEnter" style="visibility:visible">Enter a word!</h2>
+            <input id="textBox" type="text" placeholder="Enter input here!">
+            <button id="enterWord" style="visibility:visible">Start!</button>
+            <button id="submitButton" style="visibility:hidden">Check!</button>
+            <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+            <h2>Letters Guessed:</h2>
+            <h5 id="guessed"></h5>
+            <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+            <h2>Letters Remaining:</h2>
+            <h5 id="remaining"></h5>
+        </div>
+    </div>
+       
 </body>
 </html>
