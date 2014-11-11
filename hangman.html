@@ -20,6 +20,8 @@ varying vec3 N, L, E;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform vec4 lightPosition;
+attribute  vec2 vTexCoord;
+varying vec2 fTexCoord;
 
 void main()
 {
@@ -34,6 +36,7 @@ void main()
 	fdiffuseColor=diffuseColor;
 	fambientColor=ambientColor;
 	fshininess=shininess;
+    fTexCoord = vTexCoord;
 }
 </script>
 
@@ -45,9 +48,9 @@ varying vec4 fspecularColor;
 varying vec4 fdiffuseColor;
 varying vec4 fambientColor;
 varying float fshininess;
-
+varying  vec2 fTexCoord;
 varying vec3 N, L, E;
-
+uniform sampler2D Tex0;
 void main()
 {    
 	vec4 ambientProduct= fambientColor;
@@ -68,8 +71,11 @@ void main()
 
     fColor = ambient + diffuse +specular;
     fColor.a = 1.0;
+    
 
-    gl_FragColor = fColor; 
+    
+
+    gl_FragColor = fColor*(texture2D(Tex0, fTexCoord));
 }
 </script>
 <button id = "Button2">Increase theta</button>

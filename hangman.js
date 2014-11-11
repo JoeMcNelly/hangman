@@ -6,7 +6,11 @@ var diffuseArray = [];
 var specularArray = [];
 var shininessArray = [];
 var normalArray = [];
-
+var numberOfHeadVertex = 12288;
+var numberOfTorsoVertex = 36;
+var numberOfBackgroundVertex = 102;
+var numberOfArmVertex = 36;
+var numberOfLegVertex = 36;
 
 //Dudes head
 var va = vec4(0.0, 0.0, -1.0,1);
@@ -21,19 +25,18 @@ var headAmb;
 var headDiff;
 var headSpec;
 var headShininess=1000.0;
-var index=0; //pointer to current location in buffer
 
 
 //Dude's Torso
 var torsoPoints = [
-    vec4( -.8, -2,  0.2, 1.0 ),
-    vec4( -.8,  1,  0.2, 1.0 ),
-    vec4( .8,  1,  0.2, 1.0 ),
-    vec4( .8, -2,  0.2, 1.0 ),
-    vec4( -.8, -2, -0.2, 1.0 ),
-    vec4( -.8,  1, -0.2, 1.0 ),
-    vec4( .8,  1, -0.2, 1.0 ),
-    vec4( .8, -2, -0.2, 1.0 )
+    vec4( -.8, -2,  0.4, 1.0 ),
+    vec4( -.8,  1,  0.4, 1.0 ),
+    vec4( .8,  1,  0.4, 1.0 ),
+    vec4( .8, -2,  0.4, 1.0 ),
+    vec4( -.8, -2, -0.4, 1.0 ),
+    vec4( -.8,  1, -0.4, 1.0 ),
+    vec4( .8,  1, -0.4, 1.0 ),
+    vec4( .8, -2, -0.4, 1.0 )
 ];
 var torsoAmbColor=vec4(1.0,0.0,0.0,1.0);
 var torsoDiffColor=vec4(1.0,0.3,0.3,1.0);
@@ -43,6 +46,53 @@ var torsoDiff;
 var torsoSpec;
 var torsoShininess=2.0;
 
+//the post
+var postPoints = [
+    vec4( -5, 4,  0.2, 1.0 ),//0
+    vec4( -5,  5,  0.2, 1.0 ),//1
+    vec4( 5,  5,  0.2, 1.0 ),//2
+    vec4( 5, 4,  0.2, 1.0 ),//3
+    vec4( -5, 4, -0.2, 1.0 ),//4
+    vec4( -5,  5, -0.2, 1.0 ),//5
+    vec4( 5,  5, -0.2, 1.0 ),//6
+    vec4( 5, 4, -0.2, 1.0 ),//7         now start with making the vertical bar
+    vec4(5, -4, 0.2, 1),//8
+    vec4(5,-4, -0.2, 1),//9
+    vec4(4, 4,0.2,1),//10
+    vec4(4,4,-0.2,1),//11
+    vec4(4,-4,0.2,1),//12
+    vec4(4,-4,-0.2,1)//13               
+];
+
+var postAmbColor=vec4(77/255,32/255,0.0,1.0);
+var postDiffColor=vec4(77/255,0.3,0.3,1.0);
+var postSpecColor=vec4(77/255,0,0,1.0);
+var postAmb;
+var postDiff;
+var postSpec;
+var postShininess=2.0;
+
+//the ground
+
+var groundPoints = [
+    vec4(-10,-4,10,1),//0
+    vec4(-10,-5,10,1),//1
+    vec4(10,-4,10,1),//2
+    vec4(10,-5,10,1),//3
+    vec4(-10,-4,-10,1),//4
+    vec4(-10,-5,-10,1),//5
+    vec4(10,-4,-10,1),//6
+    vec4(10,-5,-10,1)//7
+];
+
+
+var groundAmbColor=vec4(11/255,97/255,11/255,1.0);
+var groundDiffColor=vec4(11/255,97/255,11/255,1.0);
+var groundSpecColor=vec4(0, 97/255,0,1.0);
+var groundAmb;
+var groundDiff;
+var groundSpec;
+var groundShininess=2.0;
 
 
 var near = -20;
@@ -73,6 +123,66 @@ var up = vec3(0.0, 1.0, 0.0);
 
 var score = 0;
 
+
+
+var texSize = 256;
+var numChecks = 8;
+var texture1, texture2;
+var t1, t2;
+
+var c;
+
+var flag = true;
+var texCoordsArray = [];
+var texCoord = [
+    vec2(0, 0),
+    vec2(0, 1),
+    vec2(1, 1),
+    vec2(1, 0)
+];
+
+var image2 = new Uint8Array(4*texSize*texSize);
+
+   /* for ( var i = 0; i < texSize; i++ ) {
+        for ( var j = 0; j <texSize; j++ ) {
+            image2[4*i*texSize+4*j] = 127+127*Math.sin(0.1*i*j);
+            image2[4*i*texSize+4*j+1] = 127+127*Math.sin(0.1*i*j);
+            image2[4*i*texSize+4*j+2] = 127+127*Math.sin(0.1*i*j);
+            image2[4*i*texSize+4*j+3] = 255;
+           }
+    }*/
+    
+    for ( var i = 0; i < texSize; i++ ) {
+        for ( var j = 0; j <texSize; j++ ) {
+            var patchx = Math.floor(i/(texSize/numChecks));
+            var patchy = Math.floor(j/(texSize/numChecks));
+            if(patchx%2 ^ patchy%2) c = 255;
+            else c = 0;
+            //c = 255*(((i & 0x8) == 0) ^ ((j & 0x8)  == 0))
+            image2[4*i*texSize+4*j] = c;
+            image2[4*i*texSize+4*j+1] = c;
+            image2[4*i*texSize+4*j+2] = c;
+            image2[4*i*texSize+4*j+3] = 255;
+        }
+    }
+
+function initTex(){
+texture2 = gl.createTexture();
+    gl.bindTexture( gl.TEXTURE_2D, texture2 );
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, texSize, texSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, image2);
+    gl.generateMipmap( gl.TEXTURE_2D );
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, 
+                      gl.NEAREST_MIPMAP_LINEAR );
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+} 
+
+
+
+
+
+
 function quad(a, b, c, d) {
     
     var pa = torsoPoints[a];
@@ -91,7 +201,12 @@ function quad(a, b, c, d) {
      vertexArray.push(torsoPoints[c]); 
 
      vertexArray.push(torsoPoints[d]); 
-     
+     texCoordsArray.push(texCoord[0]);
+     texCoordsArray.push(texCoord[1]);
+     texCoordsArray.push(texCoord[2]);
+     texCoordsArray.push(texCoord[0]);
+     texCoordsArray.push(texCoord[2]);
+     texCoordsArray.push(texCoord[3]);
      
     var t1 = subtract(pb,pa)
 	var t2 = subtract(pc,pa)
@@ -116,6 +231,108 @@ function torso()
     quad( 4, 5, 6, 7 );
     quad( 5, 4, 0, 1 );
 }
+
+function quad2(a, b, c, d) {
+    
+    var pa = postPoints[a];
+    var pb = postPoints[b];
+    var pc = postPoints[c];
+    var pd = postPoints[d];
+
+     vertexArray.push(postPoints[a]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(postPoints[b]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(postPoints[c]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(postPoints[a]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(postPoints[c]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(postPoints[d]); 
+     texCoordsArray.push(texCoord[0]);
+     
+    var t1 = subtract(pb,pa)
+	var t2 = subtract(pc,pa)
+	var norm = normalize(cross(t1,t2));
+	norm = vec4(norm);
+	for (var i=0; i<6; i++){
+		normalArray.push(norm);
+		specularArray.push(postSpec);
+		diffuseArray.push(postDiff);
+		shininessArray.push(postShininess);
+		ambientArray.push(postAmb);
+	}
+    
+}
+
+function quad3(a, b, c, d) {
+    
+    var pa = groundPoints[a];
+    var pb = groundPoints[b];
+    var pc = groundPoints[c];
+    var pd = groundPoints[d];
+
+     vertexArray.push(groundPoints[a]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(groundPoints[b]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(groundPoints[c]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(groundPoints[a]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(groundPoints[c]); 
+    texCoordsArray.push(texCoord[0]);
+     vertexArray.push(groundPoints[d]); 
+     texCoordsArray.push(texCoord[0]);
+     
+    var t1 = subtract(pb,pa)
+	var t2 = subtract(pc,pa)
+	var norm = normalize(cross(t1,t2));
+	norm = vec4(norm);
+	for (var i=0; i<6; i++){
+		normalArray.push(norm);
+		specularArray.push(groundSpec);
+		diffuseArray.push(groundDiff);
+		shininessArray.push(groundShininess);
+		ambientArray.push(groundAmb);
+	}
+    
+}
+
+
+function makePost()
+{
+    //horizontal post
+    quad2( 1, 0, 3, 2 );
+    quad2( 2, 3, 7, 6 );
+    quad2( 3, 0, 4, 7 );
+    quad2( 6, 5, 1, 2 );
+    quad2( 4, 5, 6, 7 );
+    quad2( 5, 4, 0, 1 );
+    //vertical post
+    quad2( 10, 3, 8, 12 );
+    quad2( 3, 7, 9, 8 );
+    quad2( 11, 10, 12, 13 );
+    quad2( 7, 11, 13, 9 );
+    quad2( 12, 8, 13, 9 );
+    //ground
+    /*
+    quad3(0,2,3,1);//front
+    quad3(2,6,7,3);//
+    quad3(4,0,1,5);//
+    quad3(4,6,7,5);//back
+    quad3(4,2,6,0);//
+    quad3(5,3,7,1);//
+    */
+    quad3( 0,2,3,1 );
+    quad3( 2,6,7,3 );
+    quad3( 4,0,1,5 );
+    quad3( 6,4,5,7 );
+    quad3( 4,6,2,0 );
+    quad3( 1,3,7,5 );
+}
+
 function triangle(a,b,c){
 
 	var t1 = subtract(b,a)
@@ -137,7 +354,9 @@ function triangle(a,b,c){
 	vertexArray.push(a);
 	vertexArray.push(b);
 	vertexArray.push(c);
-	index+=3;
+    texCoordsArray.push(texCoord[0]);
+    texCoordsArray.push(texCoord[0]);
+    texCoordsArray.push(texCoord[0]);
 }
 function divideTriangle(a, b, c, count) {
     if ( count > 0 ) {
@@ -182,7 +401,7 @@ window.onload = function init()
     //  Configure WebGL
     //
     gl.viewport( 0, 0, canvas.width, canvas.height );
-    gl.clearColor( .9, .9, .9, 1 ); //gray for now
+    gl.clearColor( 46/255, 204/255, 250/255, 1 ); //light blue
 	gl.enable(gl.DEPTH_TEST);
     
     var program = initShaders( gl, "vertex-shader", "fragment-shader" );
@@ -195,10 +414,18 @@ window.onload = function init()
 	torsoAmb = mult(lightAmbient, torsoAmbColor);
     torsoDiff = mult(lightDiffuse, torsoDiffColor);
     torsoSpec = mult(lightSpecular, torsoSpecColor);
+    postAmb = mult(lightAmbient, postAmbColor);
+    postDiff = mult(lightDiffuse, postDiffColor);
+    postSpec = mult(lightSpecular, postSpecColor);
+    groundAmb = mult(lightAmbient, groundAmbColor);
+    groundDiff = mult(lightDiffuse, groundDiffColor);
+    groundSpec = mult(lightSpecular, groundSpecColor);
 
     //POPULATE POINTS
+    initTex();
     tetrahedron(va, vb, vc, vd, numTimesToSubdivide);
 	torso();
+    makePost();
 	////////////////
 	
 	
@@ -256,6 +483,18 @@ window.onload = function init()
     var matShininess = gl.getAttribLocation( program, "shininess");
     gl.vertexAttribPointer(matShininess, 1, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(matShininess);
+    
+    var tBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, tBuffer);
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
+    
+    var vTexCoord = gl.getAttribLocation( program, "vTexCoord" );
+    gl.vertexAttribPointer( vTexCoord, 2, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vTexCoord );
+    
+    gl.activeTexture( gl.TEXTURE0 );
+    gl.bindTexture( gl.TEXTURE_2D, texture2 );
+    gl.uniform1i(gl.getUniformLocation( program, "Tex0"), 0);
 	
 	
     modelViewMatrixLoc = gl.getUniformLocation( program, "modelViewMatrix" );
@@ -295,8 +534,7 @@ function render()
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
 
-    //drawBackground();
-    
+    drawBackground();
 
     if (score > 0){
         drawHead();   
@@ -319,24 +557,55 @@ function render()
     window.requestAnimFrame(render);
 }
 function drawBackground(){
-//push the points and play destiny
+    gl.drawArrays( 
+        gl.TRIANGLES,
+            numberOfHeadVertex+
+            numberOfTorsoVertex, 
+        numberOfBackgroundVertex );
 }
 function drawHead(){
-    for( var i=0; i<index; i+=3) 
+    for( var i=0; i<numberOfHeadVertex; i+=3) 
         gl.drawArrays( gl.TRIANGLES, i, 3 );
 }
 function drawTorso(){
-	gl.drawArrays( gl.TRIANGLES, index, 36 );
+	gl.drawArrays( 
+        gl.TRIANGLES, 
+            numberOfHeadVertex, 
+        numberOfTorsoVertex );
 }
 function drawLeftArm(){
-//push the points to the buffers and whatnot
+    gl.drawArrays( 
+        gl.TRIANGLES, 
+            numberOfHeadVertex+
+            numberOfTorsoVertex+
+            numberOfBackgroundVertex, 
+        numberOfArmVertex );
 }
 function drawRightArm(){
-//push the points to the buffers and whatnot
+    gl.drawArrays( 
+        gl.TRIANGLES, 
+            numberOfHeadVertex+
+            numberOfTorsoVertex+
+            numberOfBackgroundVertex+
+            numberOfArmVertex, 
+        numberOfArmVertex );
 }
 function drawLeftLeg(){
-//push the points to the buffers and whatnot
+    gl.drawArrays( 
+        gl.TRIANGLES, 
+            numberOfHeadVertex+
+            numberOfTorsoVertex+
+            numberOfBackgroundVertex+
+            2*numberOfArmVertex, 
+        numberOfLegVertex );
 }
 function drawRightLeg(){
-//push the points to the buffers and whatnot
+    gl.drawArrays( 
+        gl.TRIANGLES, 
+            numberOfHeadVertex+
+            numberOfTorsoVertex+
+            numberOfBackgroundVertex+
+            2*numberOfArmVertex+
+            numberOfLegVertex, 
+        numberOfLegVertex );
 }
