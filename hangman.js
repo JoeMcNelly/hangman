@@ -424,7 +424,7 @@ window.onload = function init()
 			
 			if(allCorrect()){
 				//win win win
-				//TODO
+				document.getElementById("win").style.visibility='visible';
 				document.getElementById("submitButton").disabled=true;
 			}
 			
@@ -439,7 +439,7 @@ window.onload = function init()
 			
 			if (score>5){
 				//Lose lose lose
-				//TODO
+				document.getElementById("lose").style.visibility='visible';
 				document.getElementById("submitButton").disabled=true;
 			}
 		}
