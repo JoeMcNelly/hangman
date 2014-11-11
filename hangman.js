@@ -201,6 +201,17 @@ var texCoord = [
     vec2(1, 0)
 ];
 
+var alphabet=["a","b","c","d","e",
+	"f","g","h","i","j","k","l","m"
+	,"n","o","p","q","r","s","t","u",
+	"v","w","x","y","z"];
+var lettersLeft=alphabet.slice(0);
+var lettersGuessed=[];
+var wordToGuess=[];
+var wordToDisplay="";
+var p1Score=0;
+var p2Score=0;
+
 var image2 = new Uint8Array(4*texSize*texSize);
 
    /* for ( var i = 0; i < texSize; i++ ) {
@@ -362,6 +373,36 @@ window.onload = function init()
     document.getElementById("Button4").onclick = function(){phi += dr;};
     document.getElementById("Button5").onclick = function(){phi -= dr;};
 	*/
+	
+	document.getElementById("submitButton").onclick = function(){
+		var submission = document.getElementById("textBox").value;
+		document.getElementById("textBox")="";
+		
+		if(!isValid(submission)){
+			//invalid, pick a letter
+			//a letter that isnt already picked
+		}else if(isCorrect(submission)){
+			//fill in letters in word
+			
+			//remove from letters left
+			var index=lettersLeft.indexOf(submission);
+			if (index > -1){
+				lettersGuessed.push.apply(lettersLeft.splice(index,1));
+			}
+			
+		}else{
+			//draw hangman part
+			score++;
+			//remove from letters left
+			var index=lettersLeft.indexOf(submission);
+			if (index > -1){
+				lettersGuessed.push.apply(lettersLeft.splice(index,1));
+			}
+			if (score>5){
+				//WIN, NEW TURN
+			}
+		}
+	};
     render();
 
 }
@@ -406,6 +447,21 @@ function render()
 	}
     window.requestAnimFrame(render);
 }
+
+function isValid(subString){
+	if (!(subString.length==1)){
+		return false;
+	}
+	if (!(alphabet.indexOf(subString)>-1)){
+		return false;
+	}
+	if (!(lettersLeft.indexOf(subString)>-1)){
+		return false;
+	}
+	return true;
+}
+
+
 function drawBackground(){
     gl.drawArrays( 
         gl.TRIANGLES,
