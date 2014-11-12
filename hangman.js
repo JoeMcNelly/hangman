@@ -191,7 +191,7 @@ var bottom = -6;
 
 
     
-var lightPosition = vec4(10, 10, 7, 1.0 );//7-5-7-0
+var lightPosition = vec4(12, 10, -2, 1.0 );//7-5-7-0
 var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
 var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
 var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
@@ -203,7 +203,7 @@ var eye;
 var at = vec3(0.0, 0.0, 0.0);
 var up = vec3(0.0, 1.0, 0.0);
 
-var score = 0;
+var score = 5;
 
 
 
