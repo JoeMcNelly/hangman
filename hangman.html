@@ -92,6 +92,12 @@ body {
     border-width:10px;
     border-color: #585858;
 }
+.center {
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
+}
+
 </style>
 <script type="text/javascript" src="./Common/webgl-utils.js"></script>
 <script type="text/javascript" src="./Common/initShaders.js"></script>
@@ -103,8 +109,9 @@ body {
         <h1>Hangman in WebGL</h1>
         <h3>Written By: Orry Jarvis and Joe McNelly</h3>
     </div>
-    <div class="container" style="display:inline-block;position:absolute; float:right; white-space: nowrap;">
-         <div style="float:left; padding-left:20px; padding-right:50px; vertical-align:center; white-space: nowrap;">
+    <div class="center">
+    <div class="container" style="display:inline-block; white-space: nowrap; margin-left:auto; margin-right:auto; width:90%">
+         <div style="float:left; width:10%; white-space: nowrap; padding-right: 30px">
             <h2>Tries Left:</h2>
             <h2 id="life"></h2>
             <br/><br/><br/><br/><br/>
@@ -115,10 +122,10 @@ body {
             <button id="reset">Start a New Game!</button>
             
         </div>
-        <canvas id="gl-canvas" width="1000" height="900" align="center">
+        <canvas id="gl-canvas" width="1000" height="900" style="float:left">
         Oops ... your browser doesn't support the HTML5 canvas element
         </canvas>
-        <div style="float:right; padding-left:50px; padding-right=0px; height:100%; position:relative; white-space: nowrap;">
+        <div style="float:right; width:10%; white-space: nowrap;">
             <h2 id="charEnter" style="visibility:hidden">Enter a letter!</h2>
             <h2 id="wordEnter" style="visibility:visible">Enter a word!</h2>
             <input id="textBox" type="text" placeholder="Enter input here!">
@@ -133,6 +140,7 @@ body {
             <h2>Letters Remaining:</h2>
             <h5 id="remaining"></h5>
         </div>
+    </div>
     </div>
        
 </body>
