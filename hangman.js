@@ -1,3 +1,4 @@
+//Written by Orry Jarvis and Joe McNelly
 var gl;
 var canvas;
 var aspect;
